@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robert Rozek — Psychoanalytic Practice · Munich</title>
+<meta name="description" content="Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and clinical practice. Sessions via secure video from Munich.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://praxis-site-vert.vercel.app/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Robert Rozek — Psychoanalytic Practice">
+<meta property="og:description" content="Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and clinical practice.">
+<meta property="og:type" content="website">
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  CONFIGURATION — Replace placeholder values before launch   ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║  GA4_ID           → G-PJGQ4RBY5R  (analytics.google.com)    ║
+  ║  ADS_ID           → AW-XXXXXXXXX  (ads.google.com)          ║
+  ║  ADS_CONV_LABEL   → AW-XXXXXXXXX/LABEL (Ads conversions)    ║
+  ║  CLARITY_ID       → your Clarity project ID                  ║
+  ║  BOOKING_URL      → complicated.life/therapist/YOUR-PROFILE  ║
+  ║  SCHOLAR_URL      → scholar.google.com/citations?user=YOUR_ID║
+  ║  CONTACT_EMAIL    → rozek.therapy@pm.me                           ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  For local development, just open this file in a browser.
+  For Vercel, push to GitHub and connect the repo — it auto-deploys.
+-->
+
+<!-- ============ COOKIE CONSENT: blocks all tracking until accepted ============ -->
+<script>
+  // Cookie consent state
+  window.__consentGiven = (document.cookie.indexOf('cc_consent=accepted') !== -1);
+
+  // Only load tracking scripts if consent was already given
+  if (window.__consentGiven) {
+    loadTrackingScripts();
+  }
+
+  function acceptCookies() {
+    document.cookie = 'cc_consent=accepted; max-age=31536000; path=/; SameSite=Lax';
+    window.__consentGiven = true;
+    loadTrackingScripts();
+    document.getElementById('cookie-banner').style.display = 'none';
+  }
+
+  function declineCookies() {
+    document.cookie = 'cc_consent=declined; max-age=31536000; path=/; SameSite=Lax';
+    window.__consentGiven = false;
+    document.getElementById('cookie-banner').style.display = 'none';
+  }
+
+  function loadTrackingScripts() {
+    // GA4
+    var gs = document.createElement('script');
+    gs.async = true;
+    gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-PJGQ4RBY5R';
+    document.head.appendChild(gs);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-PJGQ4RBY5R');
+
+    // Google Ads — uncomment when ready
+    // gtag('config', 'AW-XXXXXXXXX');
+
+    // Microsoft Clarity
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window,document,"clarity","script","vnzaph1mar");
+
+    // Scroll depth tracking
+    var scrollMarkers = [25, 50, 75, 90];
+    var firedMarkers = {};
+    window.addEventListener('scroll', function() {
+      var pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+      scrollMarkers.forEach(function(m) {
+        if (pct >= m && !firedMarkers[m]) {
+          firedMarkers[m] = true;
+          gtag('event', 'scroll_depth', { percent: m });
+        }
+      });
+    }, { passive: true });
+  }
+
+  // Safe tracking wrappers — no-op if consent not given
+  function trackBooking(platform, action, label) {
+    if (!window.__consentGiven || !window.gtag) return;
+    gtag('event', 'booking_click', {
+      event_category: 'conversion',
+      event_label: label || action,
+      platform: platform,
+      action_type: action,
+      value: 150,
+      currency: 'CHF'
+    });
+    // Google Ads conversion — uncomment when ready
+    // gtag('event', 'conversion', {
+    //   send_to: 'AW-XXXXXXXXX/CONVERSION_LABEL',
+    //   value: 150,
+    //   currency: 'CHF'
+    // });
+  }
+
+  function trackOutbound(url, label) {
+    if (!window.__consentGiven || !window.gtag) return;
+    gtag('event', 'outbound_click', {
+      event_category: 'engagement',
+      event_label: label,
+      destination_url: url
+    });
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --stone-50: #fafaf9;
+    --stone-100: #f5f5f4;
+    --stone-200: #e7e5e4;
+    --stone-300: #d6d3d1;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+    --stone-700: #44403c;
+    --stone-800: #292524;
+    --stone-900: #1c1917;
+    --warm: #b8976a;
+    --warm-light: #e8ddd0;
+    --warm-muted: #d4c4ae;
+    --accent: #8b7355;
+    --accent-dark: #6b583f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--stone-50);
+    color: var(--stone-800);
+    font-weight: 300;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .serif { font-family: 'Instrument Serif', Georgia, serif; }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ============ COOKIE BANNER ============ */
+  .cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    background: var(--stone-900);
+    color: var(--stone-300);
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    animation: slideUp 0.4s ease both;
+    flex-wrap: wrap;
+  }
+
+  .cookie-banner a { color: var(--warm); text-decoration: underline; }
+  .cookie-banner a:hover { color: var(--warm-light); }
+
+  .cookie-btns {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .cookie-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+  }
+
+  .cookie-btn-accept {
+    background: var(--warm);
+    color: var(--stone-900);
+  }
+
+  .cookie-btn-accept:hover { background: var(--warm-light); }
+
+  .cookie-btn-decline {
+    background: transparent;
+    color: var(--stone-400);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .cookie-btn-decline:hover { border-color: rgba(255,255,255,0.3); color: var(--stone-200); }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* ============ NAVIGATION ============ */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 50;
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(24px) saturate(1.2);
+    -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    background: rgba(250, 250, 249, 0.82);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    transition: padding 0.3s;
+  }
+
+  nav.scrolled { padding: 0.9rem 2rem; }
+
+  .nav-left {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    color: var(--stone-900);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-tag {
+    font-size: 0.65rem;
+    color: var(--stone-400);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.25rem;
+    align-items: center;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--stone-500);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--stone-900); }
+
+  .btn-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.4rem;
+    background: var(--stone-900);
+    color: var(--stone-50) !important;
+    border-radius: 100px;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.1em !important;
+    transition: all 0.3s;
+  }
+
+  .btn-nav:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  /* Mobile menu */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: var(--stone-700);
+    margin: 5px 0;
+    transition: 0.3s;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2rem 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--warm);
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--stone-900);
+    max-width: 850px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    margin-top: 2.5rem;
+    font-size: 1.05rem;
+    color: var(--stone-500);
+    max-width: 500px;
+    line-height: 1.85;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+    align-items: center;
+    animation: fadeUp 0.8s ease 0.3s both;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2.2rem;
+    background: var(--stone-900);
+    color: var(--stone-50);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: transparent;
+    color: var(--stone-600);
+    border: 1px solid var(--stone-300);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: all 0.35s;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--stone-500);
+    color: var(--stone-800);
+    transform: translateY(-2px);
+  }
+
+  .arrow {
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+
+  a:hover .arrow, button:hover .arrow { transform: translateX(3px); }
+
+  /* Decorative elements */
+  .hero-accent {
+    position: absolute;
+    right: 4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeIn 1.2s ease 0.6s both;
+  }
+
+  .hero-accent .line {
+    width: 1px;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--warm-muted), transparent);
+  }
+
+  .hero-accent .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--warm);
+  }
+
+  /* ============ SHARED ============ */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .divider { border: none; height: 1px; background: var(--stone-200); }
+
+  .section { padding: 6.5rem 0; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--warm);
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--stone-900);
+    line-height: 1.2;
+    max-width: 650px;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+    color: var(--stone-500);
+    max-width: 550px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  /* ============ ABOUT ============ */
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-credentials {
+    position: sticky;
+    top: 7rem;
+  }
+
+  .credential-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--stone-200);
+  }
+
+  .credential-item:last-child { border: none; }
+
+  .credential-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+    margin-bottom: 0.25rem;
+  }
+
+  .credential-value {
+    font-size: 0.92rem;
+    color: var(--stone-800);
+    font-weight: 400;
+  }
+
+  .about-text p {
+    font-size: 0.95rem;
+    color: var(--stone-600);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text p:last-child { margin-bottom: 0; }
+
+  .about-dual-note {
+    margin-top: 2.5rem;
+    padding: 1.75rem;
+    border-radius: 12px;
+    background: var(--warm-light);
+    border: 1px solid var(--warm-muted);
+  }
+
+  .about-dual-note h4 {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--stone-800);
+    margin-bottom: 0.5rem;
+  }
+
+  .about-dual-note p {
+    font-size: 0.85rem !important;
+    color: var(--stone-600) !important;
+    line-height: 1.7 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ============ APPROACH ============ */
+  .approach-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .approach-card {
+    padding: 2.5rem 2rem;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid var(--stone-200);
+    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .approach-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--warm), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .approach-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.06);
+    border-color: var(--warm-light);
+  }
+
+  .approach-card:hover::after { opacity: 1; }
+
+  .approach-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.5rem;
+    color: var(--warm-light);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .approach-card h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--stone-900);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .approach-card p {
+    font-size: 0.88rem;
+    color: var(--stone-500);
+    line-height: 1.75;
+  }
+
+  /* ============ PRICING ============ */
+  .pricing-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .pricing-main {
+    padding: 3rem;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid var(--stone-200);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-main::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--warm), var(--accent), transparent);
+  }
+
+  .pricing-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .pricing-currency {
+    font-size: 1.2rem;
+    color: var(--stone-400);
+    font-weight: 400;
+  }
+
+  .pricing-number {
+    font-family: 'Instrument Serif', serif;
+    font-size: 4.5rem;
+    color: var(--stone-900);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .pricing-per {
+    font-size: 0.85rem;
+    color: var(--stone-400);
+  }
+
+  .pricing-note {
+    font-size: 0.85rem;
+    color: var(--stone-500);
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .pricing-includes {
+    list-style: none;
+    margin-bottom: 2.5rem;
+  }
+
+  .pricing-includes li {
+    padding: 0.6rem 0;
+    font-size: 0.88rem;
+    color: var(--stone-600);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--stone-100);
+  }
+
+  .pricing-includes li:last-child { border: none; }
+
+  .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--warm-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  .pricing-side h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--stone-900);
+    margin-bottom: 1.5rem;
+  }
+
+  .pricing-faq {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--stone-200);
+  }
+
+  .pricing-faq:last-of-type { border: none; }
+
+  .pricing-faq h4 {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--stone-800);
+    margin-bottom: 0.4rem;
+  }
+
+  .pricing-faq p {
+    font-size: 0.85rem;
+    color: var(--stone-500);
+    line-height: 1.7;
+  }
+
+  /* ============ RESEARCH BANNER ============ */
+  .research-banner {
+    background: var(--stone-900);
+    border-radius: 18px;
+    padding: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+
+  .research-banner::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -5%;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(184, 151, 106, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .research-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: 10%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(184, 151, 106, 0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  .research-text h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--stone-50);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .research-text p {
+    color: var(--stone-400);
+    font-size: 0.92rem;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .btn-scholar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1.8rem;
+    background: rgba(255,255,255,0.07);
+    color: var(--stone-100);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: all 0.35s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-scholar:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+  }
+
+  .btn-scholar svg { width: 17px; height: 17px; }
+
+  /* ============ CTA ============ */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 2rem;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .cta-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.5rem, 5vw, 3.8rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--stone-900);
+    line-height: 1.12;
+    margin-bottom: 1.25rem;
+  }
+
+  .cta-section p {
+    color: var(--stone-500);
+    font-size: 0.95rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+
+  .cta-section .btn-primary { font-size: 0.88rem; padding: 1.05rem 2.5rem; }
+
+  .cta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--stone-400);
+  }
+
+  .cta-badge svg { width: 14px; height: 14px; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--stone-200);
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-left {
+    font-size: 0.78rem;
+    color: var(--stone-400);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 0.72rem;
+    color: var(--stone-400);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--stone-700); }
+
+  .footer-legal {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--stone-100);
+    font-size: 0.72rem;
+    color: var(--stone-400);
+    line-height: 1.7;
+  }
+
+  .footer-legal a { color: var(--stone-500); text-decoration: underline; }
+  .footer-legal a:hover { color: var(--stone-700); }
+
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.08s; }
+  .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.16s; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px) {
+    .approach-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .pricing-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .about-credentials { position: static; }
+    .research-banner { flex-direction: column; align-items: flex-start; padding: 3rem; }
+    .hero-accent { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(250, 250, 249, 0.96);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      padding: 1.5rem;
+      gap: 1rem;
+      border-bottom: 1px solid var(--stone-200);
+    }
+
+    .nav-links.open { display: flex; }
+    .menu-toggle { display: block; }
+
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .container { padding: 0 1.5rem; }
+    .section { padding: 4.5rem 0; }
+    .pricing-main { padding: 2rem; }
+    .cta-section { padding: 5rem 1.5rem; }
+    .cookie-banner { flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 2.6rem; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .pricing-number { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COOKIE CONSENT BANNER ============ -->
+<div class="cookie-banner" id="cookie-banner" style="display:none;">
+  <div>
+    This site uses cookies for analytics to improve your experience.
+    See our <a href="/datenschutz.html">Privacy Policy</a> for details.
+    No tracking occurs without your consent.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-btn-decline" onclick="declineCookies()">Decline</button>
+    <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">Accept</button>
+  </div>
+</div>
+
+<script>
+  // Show cookie banner only if no prior choice was made
+  if (document.cookie.indexOf('cc_consent=') === -1) {
+    document.getElementById('cookie-banner').style.display = 'flex';
+  }
+</script>
+
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <div class="nav-left">
+    <a href="#" class="logo">Robert Rozek</a>
+    <span class="logo-tag">Psychoanalysis</span>
+  </div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#research">Research</a></li>
+    <li>
+      <a href="https://go.redmedical.de/booking/robert-rozek"
+         target="_blank" rel="noopener" class="btn-nav"
+         onclick="trackBooking('redmedical', 'nav_book', 'Nav CTA')">
+        Book <span class="arrow">&rarr;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-label">Psychoanalytic Practice &middot; Munich &middot; Online</div>
+  <h1>A space to think <em>clearly</em> again</h1>
+  <p class="hero-sub">
+    Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and rigorous clinical practice. Secure video sessions from Munich.
+  </p>
+  <div class="hero-actions">
+    <a href="https://go.redmedical.de/booking/robert-rozek"
+       target="_blank" rel="noopener" class="btn-primary"
+       onclick="trackBooking('redmedical', 'hero_book', 'Hero CTA')">
+      Book a free consultation <span class="arrow">&rarr;</span>
+    </a>
+    <a href="#about" class="btn-ghost">
+      Learn more <span class="arrow">&darr;</span>
+    </a>
+  </div>
+  <div class="hero-accent">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+</section>
+
+<div class="container"><hr class="divider"></div>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">About</div>
+      <div class="section-title">Who I am</div>
+    </div>
+
+    <div class="about-layout">
+      <div class="about-credentials reveal">
+        <div class="credential-item">
+          <div class="credential-label">Qualification</div>
+          <div class="credential-value">MSc Psychology, MA</div>
+        </div>
+        <div class="credential-item">
+          <div class="credential-label">License</div>
+          <div class="credential-value">Heilpraktiker für Psychotherapie (Germany)</div>
+        </div>
+        <div class="credential-item">
+          <div class="credential-label">Training</div>
+          <div class="credential-value">Psychoanalytic training — Lacanian orientation</div>
+        </div>
+        <div class="credential-item">
+          <div class="credential-label">Location</div>
+          <div class="credential-value">Munich, Germany (sessions online)</div>
+        </div>
+        <div class="credential-item">
+          <div class="credential-label">Languages</div>
+          <div class="credential-value">English, German</div>
+        </div>
+      </div>
+
+      <div class="about-text reveal">
+        <p>
+          I am a psychoanalytically trained psychologist working at the intersection of clinical practice, continental philosophy, and critical theory. My approach draws on Lacan, Hegel, and the Frankfurt School tradition — not as abstract frameworks, but as living tools for understanding the structures that shape experience, suffering, and desire.
+        </p>
+        <p>
+          Before entering clinical work, my academic research focused on determinate negation, psychotic structure, and the relationship between crisis and subjectivity. This theoretical grounding informs how I listen: not for symptoms to manage, but for the logic — often unconscious — that organizes a person's way of being in the world.
+        </p>
+        <p>
+          I work with individuals navigating existential impasses, relational difficulties, questions of identity and meaning, professional burnout, and the aftereffects of experiences that resist easy categorization. I also offer supervision for clinicians and graduate students seeking a psychoanalytic frame for their case work.
+        </p>
+        <p>
+          I believe that genuine change comes not from learning new coping strategies, but from a sustained encounter with what you already know but cannot yet say. My role is to provide the conditions — the regularity, the attention, the theoretical precision — for that encounter to take place.
+        </p>
+
+        <div class="about-dual-note">
+          <h4>Scope of practice</h4>
+          <p>
+            For clients in Germany, I offer psychotherapy under my Heilpraktiker für Psychotherapie license. For international clients, I offer psychoanalytic counseling and philosophical consultation. This is not a substitute for psychiatric or emergency medical treatment. If you are in crisis, please contact your local emergency services.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><hr class="divider"></div>
+
+<!-- ============ APPROACH ============ -->
+<section class="section" id="approach">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Approach</div>
+      <div class="section-title">Psychoanalysis as rigorous thinking — not symptom management</div>
+    </div>
+    <div class="approach-grid reveal-stagger">
+      <div class="approach-card reveal">
+        <div class="approach-num">01</div>
+        <h3>Structural Listening</h3>
+        <p>Working at the level of structure rather than symptom. Understanding how your particular way of organizing experience creates both your strengths and your suffering.</p>
+      </div>
+      <div class="approach-card reveal">
+        <div class="approach-num">02</div>
+        <h3>Philosophical Grounding</h3>
+        <p>Drawing on Hegel, Lacan, and critical theory to understand the deeper logic of your situation — not applying techniques, but thinking together about what matters.</p>
+      </div>
+      <div class="approach-card reveal">
+        <div class="approach-num">03</div>
+        <h3>Sovereignty & Agency</h3>
+        <p>Respecting your intelligence and autonomy. Therapy as collaborative inquiry, not expert-patient hierarchy. Your knowledge of yourself is the starting point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><hr class="divider"></div>
+
+<!-- ============ PRICING ============ -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Pricing</div>
+      <div class="section-title">Transparent, clear</div>
+      <p class="section-desc">One rate for all sessions. No hidden costs, no sliding complexity. The initial consultation is free.</p>
+    </div>
+
+    <div class="pricing-layout">
+      <div class="pricing-main reveal">
+        <div class="pricing-amount">
+          <span class="pricing-currency">CHF</span>
+          <span class="pricing-number">150</span>
+        </div>
+        <div class="pricing-per">per session &middot; 50 minutes</div>
+        <p class="pricing-note">Applies equally to individual analysis, supervision, and ongoing sessions. Initial 30-minute consultation is complimentary.</p>
+
+        <ul class="pricing-includes">
+          <li><span class="check">&check;</span> Secure video session via encrypted platform</li>
+          <li><span class="check">&check;</span> Flexible scheduling — daytime & evening</li>
+          <li><span class="check">&check;</span> Free 30-minute initial consultation</li>
+          <li><span class="check">&check;</span> No lock-in — cancel or pause anytime</li>
+          <li><span class="check">&check;</span> Invoice for insurance reimbursement (GebüH)</li>
+        </ul>
+
+        <a href="https://go.redmedical.de/booking/robert-rozek"
+           target="_blank" rel="noopener" class="btn-primary" style="width: 100%; justify-content: center;"
+           onclick="trackBooking('redmedical', 'pricing_book', 'Pricing CTA')">
+          Book free consultation <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="pricing-side reveal">
+        <h3>Common questions</h3>
+
+        <div class="pricing-faq">
+          <h4>Is the initial consultation really free?</h4>
+          <p>Yes. 30 minutes to discuss your situation and whether this approach is right for you. No obligation.</p>
+        </div>
+
+        <div class="pricing-faq">
+          <h4>How often are sessions?</h4>
+          <p>Typically weekly. Twice-weekly is available for those who want deeper analytic work. We'll find the right rhythm together.</p>
+        </div>
+
+        <div class="pricing-faq">
+          <h4>Can I claim insurance?</h4>
+          <p>I provide detailed invoices referencing GebüH codes. Reimbursement depends on your supplementary insurance (Zusatzversicherung). Please check with your provider before starting.</p>
+        </div>
+
+        <div class="pricing-faq">
+          <h4>What platform do you use for video?</h4>
+          <p>Sessions are conducted through a secure, GDPR-compliant video platform designed for clinical use.</p>
+        </div>
+
+        <div class="pricing-faq">
+          <h4>Do you offer supervision?</h4>
+          <p>Yes — for clinicians and graduate students. Same rate, 60-minute sessions. Case discussion grounded in psychoanalytic theory.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><hr class="divider"></div>
+
+<!-- ============ RESEARCH ============ -->
+<section class="section" id="research">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Research</div>
+      <div class="section-title">Theory as living practice</div>
+      <p class="section-desc">Published work at the intersection of Hegelian philosophy, psychoanalytic theory, and contemporary critical thought. Research informs practice; practice grounds research.</p>
+    </div>
+
+    <div class="research-banner reveal">
+      <div class="research-text">
+        <h3>Published Research</h3>
+        <p>Papers on psychoanalysis, continental philosophy, and critical theory — including work on determinate negation, psychotic structure, and the logic of crisis.</p>
+      </div>
+      <a href="https://scholar.google.com/citations?hl=de&user=2dEjMfkAAAAJ"
+         target="_blank" rel="noopener" class="btn-scholar"
+         onclick="trackOutbound(this.href, 'Google Scholar')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        Google Scholar <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-section reveal">
+  <h2>Ready to begin?</h2>
+  <p>Book a free 30-minute consultation. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment.</p>
+  <a href="https://go.redmedical.de/booking/robert-rozek"
+     target="_blank" rel="noopener" class="btn-primary"
+     onclick="trackBooking('redmedical', 'cta_book', 'Bottom CTA')">
+    Schedule free consultation <span class="arrow">&rarr;</span>
+  </a>
+  <div class="cta-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Secure &middot; Confidential &middot; GDPR compliant
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2026 Robert Rozek &middot; Psychoanalytic Practice, Munich</div>
+      <ul class="footer-links">
+        <li><a href="https://go.redmedical.de/booking/robert-rozek" target="_blank" rel="noopener"
+               onclick="trackOutbound(this.href, 'Footer ItsComplicated')">RED Medical</a></li>
+        <li><a href="https://scholar.google.com/citations?hl=de&user=2dEjMfkAAAAJ" target="_blank" rel="noopener"
+               onclick="trackOutbound(this.href, 'Footer Scholar')">Scholar</a></li>
+        <li><a href="mailto:rozek.therapy@pm.me">Contact</a></li>
+        <li><a href="/datenschutz.html">Datenschutz</a></li>
+        <li><a href="/impressum.html">Impressum</a></li>
+      </ul>
+    </div>
+    <div class="footer-legal">
+      Robert Rozek, MSc, MA &middot; Praxis für Psychotherapie nach Heilpraktikergesetz &middot; Augsburgerstraße 6, 80337 München<br>
+      This website does not constitute medical advice. Psychoanalytic counseling for international clients is not psychotherapy as defined by local health regulations.
+      If you are in crisis, contact your local emergency services or <a href="https://www.telefonseelsorge.de/" target="_blank" rel="noopener">Telefonseelsorge</a> (DE: 0800 111 0 111).
+    </div>
+  </div>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+  // Nav shrink on scroll
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // Reveal on scroll
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+  // Close mobile menu on link click
+  document.querySelectorAll('.nav-links a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>
