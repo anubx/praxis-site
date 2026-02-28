@@ -20,15 +20,28 @@
   ║  GA4_ID           → G-PJGQ4RBY5R  (analytics.google.com)    ║
   ║  ADS_ID           → AW-XXXXXXXXX  (ads.google.com)          ║
   ║  ADS_CONV_LABEL   → AW-XXXXXXXXX/LABEL (Ads conversions)    ║
-  ║  CLARITY_ID       → your Clarity project ID                  ║
-  ║  BOOKING_URL      → complicated.life/therapist/YOUR-PROFILE  ║
-  ║  SCHOLAR_URL      → scholar.google.com/citations?user=YOUR_ID║
-  ║  CONTACT_EMAIL    → rozek.therapy@pm.me                           ║
+  ║  CLARITY_ID       → vnzaph1mar                                ║
+  ║  CAL_LINK         → YOUR-CAL-USERNAME/30min (cal.com)        ║
+  ║  SCHOLAR_URL      → scholar.google.com/citations?user=...    ║
+  ║  CONTACT_EMAIL    → rozek.therapy@pm.me                      ║
+  ║  VIDEO            → RED Medical (red connect plus)            ║
+  ║  PAYMENTS         → Stripe via cal.com integration            ║
   ╚══════════════════════════════════════════════════════════════╝
 
   For local development, just open this file in a browser.
   For Vercel, push to GitHub and connect the repo — it auto-deploys.
 -->
+
+<!-- ============ CAL.COM EMBED ============ -->
+<script>
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; typeof namespace === "string" ? (cal.ns[namespace] = api) && p(api, ar) : p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", {origin:"https://app.cal.com"});
+  Cal("ui", {
+    theme: "light",
+    styles: { branding: { brandColor: "#1c1917" } },
+    hideEventTypeDetails: false
+  });
+</script>
 
 <!-- ============ COOKIE CONSENT: blocks all tracking until accepted ============ -->
 <script>
@@ -96,7 +109,7 @@
     gtag('event', 'booking_click', {
       event_category: 'conversion',
       event_label: label || action,
-      platform: platform,
+      platform: platform || 'calcom',
       action_type: action,
       value: 150,
       currency: 'CHF'
@@ -1030,9 +1043,9 @@
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#research">Research</a></li>
     <li>
-      <a href="https://complicated.life/book/robertrozek"
-         target="_blank" rel="noopener" class="btn-nav"
-         onclick="trackBooking('itscomplicated', 'nav_book', 'Nav CTA')">
+      <a href="#" class="btn-nav"
+         data-cal-link="YOUR-CAL-USERNAME/30min" data-cal-config='{"layout":"month_view"}'
+         onclick="trackBooking('calcom', 'nav_book', 'Nav CTA')">
         Book <span class="arrow">&rarr;</span>
       </a>
     </li>
@@ -1047,9 +1060,9 @@
     Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and rigorous clinical practice. Secure video sessions from Munich.
   </p>
   <div class="hero-actions">
-    <a href="https://complicated.life/book/robertrozek"
-       target="_blank" rel="noopener" class="btn-primary"
-       onclick="trackBooking('itscomplicated', 'hero_book', 'Hero CTA')">
+    <a href="#" class="btn-primary"
+       data-cal-link="YOUR-CAL-USERNAME/30min" data-cal-config='{"layout":"month_view"}'
+       onclick="trackBooking('calcom', 'hero_book', 'Hero CTA')">
       Book a free consultation <span class="arrow">&rarr;</span>
     </a>
     <a href="#about" class="btn-ghost">
@@ -1179,9 +1192,9 @@
           <li><span class="check">&check;</span> Invoice for insurance reimbursement (GebüH)</li>
         </ul>
 
-        <a href="https://complicated.life/book/robertrozek"
-           target="_blank" rel="noopener" class="btn-primary" style="width: 100%; justify-content: center;"
-           onclick="trackBooking('itscomplicated', 'pricing_book', 'Pricing CTA')">
+        <a href="#" class="btn-primary" style="width: 100%; justify-content: center;"
+           data-cal-link="YOUR-CAL-USERNAME/30min" data-cal-config='{"layout":"month_view"}'
+           onclick="trackBooking('calcom', 'pricing_book', 'Pricing CTA')">
           Book free consultation <span class="arrow">&rarr;</span>
         </a>
       </div>
@@ -1206,7 +1219,7 @@
 
         <div class="pricing-faq">
           <h4>What platform do you use for video?</h4>
-          <p>Sessions are conducted through a secure, GDPR-compliant video platform designed for clinical use.</p>
+          <p>Sessions are conducted through RED Medical — a certified, DSGVO-compliant video platform with end-to-end encryption, designed for clinical use.</p>
         </div>
 
         <div class="pricing-faq">
@@ -1251,9 +1264,9 @@
 <section class="cta-section reveal">
   <h2>Ready to begin?</h2>
   <p>Book a free 30-minute consultation. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment.</p>
-  <a href="https://complicated.life/book/robertrozek"
-     target="_blank" rel="noopener" class="btn-primary"
-     onclick="trackBooking('itscomplicated', 'cta_book', 'Bottom CTA')">
+  <a href="#" class="btn-primary"
+     data-cal-link="YOUR-CAL-USERNAME/30min" data-cal-config='{"layout":"month_view"}'
+     onclick="trackBooking('calcom', 'cta_book', 'Bottom CTA')">
     Schedule free consultation <span class="arrow">&rarr;</span>
   </a>
   <div class="cta-badge">
@@ -1268,8 +1281,6 @@
     <div class="footer-inner">
       <div class="footer-left">&copy; 2026 Robert Rozek &middot; Psychoanalytic Practice, Munich</div>
       <ul class="footer-links">
-        <li><a href="https://complicated.life/robertrozek" target="_blank" rel="noopener"
-               onclick="trackOutbound(this.href, 'Footer ItsComplicated')">It's Complicated</a></li>
         <li><a href="https://scholar.google.com/citations?hl=de&user=2dEjMfkAAAAJ" target="_blank" rel="noopener"
                onclick="trackOutbound(this.href, 'Footer Scholar')">Scholar</a></li>
         <li><a href="mailto:rozek.therapy@pm.me">Contact</a></li>
