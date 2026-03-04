@@ -38,8 +38,15 @@ function verifyCalcomSignature(payload, signature, secret) {
  * Heuristic: check timezone, locale, or location fields.
  */
 function detectLanguage(booking) {
-  const tz = booking.attendees?.[0]?.timeZone || '';
-  const locale = booking.attendees?.[0]?.language || booking.attendees?.[0]?.locale || '';
+  const tz = String(booking.attendees?.[0]?.timeZone || '');
+  const langField = booking.attendees?.[0]?.language;
+  const localeField = booking.attendees?.[0]?.locale;
+
+  // language/locale can be a string or an object — normalize to string
+  const locale = typeof langField === 'string' ? langField
+    : typeof localeField === 'string' ? localeField
+    : typeof langField?.locale === 'string' ? langField.locale
+    : '';
 
   // German-speaking regions
   if (locale.startsWith('de')) return 'de';
