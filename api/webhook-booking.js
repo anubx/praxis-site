@@ -32,8 +32,12 @@ function verifyCalcomSignature(payload, signature, secret) {
     .createHmac('sha256', secret)
     .update(payload)
     .digest('hex');
+  // Cal.com may send signature as-is or prefixed with "sha256="
+  const sig = signature.replace(/^sha256=/, '');
+  // Guard against length mismatch before timingSafeEqual
+  if (sig.length !== expected.length) return false;
   return crypto.timingSafeEqual(
-    Buffer.from(signature),
+    Buffer.from(sig),
     Buffer.from(expected)
   );
 }
