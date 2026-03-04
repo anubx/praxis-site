@@ -55,11 +55,10 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
         mobile: phone || undefined,
         authentication: phone ? 'sms' : 'email',
         // Single signature on the last page — "Unterschrift des Klienten" line.
-        // OpenAPI uses 1-based pages; -1 = last page (from API docs).
-        // Updated PDF has 6 pages, signature block on last page.
-        // "Unterschrift des Klienten" label at ~109pt from top (pdfplumber).
+        // OpenAPI uses 1-based pages. Updated PDF has 6 pages.
+        // DE label at ~78pt from top, EN at ~64pt. Use y=60 to place above the line.
         signatures: [
-          { page: -1, x: '63', y: '95' },
+          { page: 6, x: '63', y: '60' },
         ],
       },
     ],
