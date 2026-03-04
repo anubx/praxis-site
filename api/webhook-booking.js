@@ -24,7 +24,94 @@
  */
 
 const crypto = require('crypto');
-const { sendForSignature, hasAlreadySigned } = require('./esign-provider');
+const { sendForSignature } = require('./esign-provider');
+
+// ─── Mailjet Email Sending ──────────────────────────────────
+
+/**
+ * Send signing URL to client via Mailjet API.
+ * OpenAPI EU-SES does NOT send invitation emails — we must deliver the signing link ourselves.
+ *
+ * ENV vars: MAILJET_API_KEY, MAILJET_SECRET_KEY, MAILJET_FROM_EMAIL, MAILJET_FROM_NAME
+ */
+async function sendSigningEmail({ email, name, signingUrl, lang }) {
+  const apiKey = process.env.MAILJET_API_KEY;
+  const secretKey = process.env.MAILJET_SECRET_KEY;
+  const fromEmail = process.env.MAILJET_FROM_EMAIL || 'praxis@robertrozek.de';
+  const fromName = process.env.MAILJET_FROM_NAME || 'Praxis Robert Rozek';
+
+  if (!apiKey || !secretKey) {
+    console.warn('[Mailjet] API keys not configured — skipping signing email');
+    return false;
+  }
+
+  const isDE = lang === 'de';
+  const subject = isDE
+    ? 'Ihre Aufnahmedokumente — bitte unterschreiben'
+    : 'Your intake documents — please sign';
+
+  const htmlBody = isDE
+    ? `<div style="font-family: Georgia, serif; color: #1c1917; max-width: 600px;">
+        <p>Liebe/r ${name},</p>
+        <p>vielen Dank für Ihre Buchung. Vor unserer ersten Sitzung bitte ich Sie, die Aufnahmedokumente zu lesen und elektronisch zu unterschreiben.</p>
+        <p style="margin: 24px 0;">
+          <a href="${signingUrl}" style="background-color: #b8976a; color: #1c1917; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">Dokumente unterschreiben</a>
+        </p>
+        <p>Der Link führt Sie zu einer sicheren Signaturplattform. Sie werden gebeten, sich per E-Mail-Code (OTP) zu authentifizieren.</p>
+        <p>Bei Fragen stehe ich Ihnen gerne zur Verfügung.</p>
+        <p>Mit freundlichen Grüßen,<br>Robert Rozek</p>
+        <hr style="border: none; border-top: 1px solid #e7e5e4; margin: 24px 0;">
+        <p style="font-size: 12px; color: #a8a29e;">Praxis Robert Rozek · Augsburgerstraße 6 · 80337 München<br>
+        <a href="https://robertrozek.de" style="color: #b8976a;">robertrozek.de</a></p>
+      </div>`
+    : `<div style="font-family: Georgia, serif; color: #1c1917; max-width: 600px;">
+        <p>Dear ${name},</p>
+        <p>Thank you for your booking. Before our first session, please review and electronically sign the intake documents.</p>
+        <p style="margin: 24px 0;">
+          <a href="${signingUrl}" style="background-color: #b8976a; color: #1c1917; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">Sign documents</a>
+        </p>
+        <p>The link will take you to a secure signing platform. You will be asked to authenticate via an email code (OTP).</p>
+        <p>If you have any questions, please don't hesitate to reach out.</p>
+        <p>Kind regards,<br>Robert Rozek</p>
+        <hr style="border: none; border-top: 1px solid #e7e5e4; margin: 24px 0;">
+        <p style="font-size: 12px; color: #a8a29e;">Praxis Robert Rozek · Augsburgerstraße 6 · 80337 München<br>
+        <a href="https://robertrozek.de" style="color: #b8976a;">robertrozek.de</a></p>
+      </div>`;
+
+  const textBody = isDE
+    ? `Liebe/r ${name},\n\nvielen Dank für Ihre Buchung. Bitte unterschreiben Sie die Aufnahmedokumente unter folgendem Link:\n\n${signingUrl}\n\nMit freundlichen Grüßen,\nRobert Rozek\nPraxis Robert Rozek · Augsburgerstraße 6 · 80337 München`
+    : `Dear ${name},\n\nThank you for your booking. Please sign the intake documents at the following link:\n\n${signingUrl}\n\nKind regards,\nRobert Rozek\nPraxis Robert Rozek · Augsburgerstraße 6 · 80337 München`;
+
+  const body = {
+    Messages: [
+      {
+        From: { Email: fromEmail, Name: fromName },
+        To: [{ Email: email, Name: name }],
+        Subject: subject,
+        TextPart: textBody,
+        HTMLPart: htmlBody,
+      },
+    ],
+  };
+
+  const res = await fetch('https://api.mailjet.com/v3.1/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Basic ' + Buffer.from(`${apiKey}:${secretKey}`).toString('base64'),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`[Mailjet] Send failed (${res.status}): ${err}`);
+    return false;
+  }
+
+  console.log(`[Mailjet] Signing email sent to ${email}`);
+  return true;
+}
 
 function verifyCalcomSignature(payload, signature, secret) {
   if (!secret || !signature) return false;
@@ -113,17 +200,11 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Check if this client has already signed intake documents
-    const alreadySigned = await hasAlreadySigned(attendee.email);
+    // NOTE: hasAlreadySigned is disabled — GET /signatures only works for QES, not EU-SES (returns 404).
+    // For now, every booking sends a new signing request. Signing twice is harmless.
+    // TODO: Re-enable if OpenAPI adds EU-SES to GET /signatures, or track locally.
 
-    if (alreadySigned) {
-      console.log(`Client already signed — skipping e-sign request`);
-      return res.status(200).json({
-        success: true,
-        skipped: true,
-        reason: 'already_signed',
-      });
-    }
+    console.log(`[Webhook] Booking: ${attendee.name} <${attendee.email}> [${lang}] — sending ${provider} e-sign request`);
 
     const result = await sendForSignature({
       name: attendee.name,
@@ -133,12 +214,27 @@ module.exports = async function handler(req, res) {
       siteUrl,
     });
 
-    console.log(`E-sign sent via ${result.provider}: ${result.requestId}`);
+    console.log(`[Webhook] E-sign sent via ${result.provider}: ${result.requestId}`);
+    console.log(`[Webhook] Signing URL: ${result.signingUrl}`);
+    console.log(`[Webhook] Status: ${result.status}`);
+
+    // Send signing URL to client via Mailjet
+    if (result.signingUrl) {
+      await sendSigningEmail({
+        email: attendee.email,
+        name: attendee.name,
+        signingUrl: result.signingUrl,
+        lang,
+      });
+    } else {
+      console.warn('[Webhook] No signing URL returned — client will not receive signing email');
+    }
 
     return res.status(200).json({
       success: true,
       provider: result.provider,
       requestId: result.requestId,
+      signingUrl: result.signingUrl,
       status: result.status,
     });
   } catch (err) {

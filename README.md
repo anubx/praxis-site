@@ -101,6 +101,10 @@ All set in Vercel Dashboard → Settings → Environment Variables → All Envir
 | `OPENAPI_API_KEY` | OpenAPI.com API token (hex format, from console.openapi.com) |
 | `OPENAPI_CALLBACK_URL` | `https://robertrozek.de/api/esign-callback` |
 | `OPENAPI_SANDBOX` | `true` for sandbox (`test.esignature.openapi.com`), omit or `false` for production |
+| `MAILJET_API_KEY` | Mailjet API key (from mailjet.com → API Keys) |
+| `MAILJET_SECRET_KEY` | Mailjet secret key |
+| `MAILJET_FROM_EMAIL` | Sender email, e.g. `praxis@robertrozek.de` (must be verified domain in Mailjet) |
+| `MAILJET_FROM_NAME` | Sender display name, e.g. `Praxis Robert Rozek` |
 | `DOCUSIGN_INTEGRATION_KEY` | DocuSign OAuth integration key (only if using DocuSign) |
 | `DOCUSIGN_USER_ID` | DocuSign user GUID — NOT the keypair ID! (only if using DocuSign) |
 | `DOCUSIGN_ACCOUNT_ID` | DocuSign API account ID in GUID format (only if using DocuSign) |
@@ -546,18 +550,56 @@ Only do this after Phase 1 has been stable for several days. Recommended: **Clou
 | Cloudflare proxy breaks Vercel | You left the orange cloud (Proxied) on. Switch to grey cloud (DNS only) for both A and CNAME records. |
 | Transfer stuck / rejected by DENIC | Transfer lock (Domainsperre) is still on at all-inkl, or you clicked "keep domain" in a confirmation email by mistake. Go to KAS → confirm Domainsperre is disabled. If all-inkl sent a retention email, contact their support to release it. |
 
+### Signing Email Delivery (Mailjet)
+
+OpenAPI EU-SES does **NOT** send signing invitation emails. It returns a signing URL in the API response, and you must deliver that URL to the client yourself. The webhook currently logs the URL; Mailjet sends it.
+
+**Setup steps:**
+
+- [ ] **Sign Mailjet DPA**: https://www.mailjet.com/legal/dpa/ → sign from Mailjet dashboard (Account → DSGVO/GDPR)
+- [ ] **Add `robertrozek.de` as sending domain in Mailjet**:
+  - Mailjet dashboard → Domains & Absender → Domains → Add domain → `robertrozek.de`
+  - Mailjet will give you **SPF** and **DKIM** TXT records to add at all-inkl KAS
+  - Go to KAS → DNS settings for `robertrozek.de` → add the TXT records Mailjet requires
+  - Back in Mailjet → click Validate/Authenticate → confirm domain is verified
+- [ ] **Add Vercel env vars**:
+  - `MAILJET_API_KEY` = `3876d6d98a328f2be993e66430f30122`
+  - `MAILJET_SECRET_KEY` = (your secret key)
+  - `MAILJET_FROM_EMAIL` = `praxis@robertrozek.de` (or any `@robertrozek.de` address)
+  - `MAILJET_FROM_NAME` = `Praxis Robert Rozek`
+- [ ] **Redeploy** Vercel after adding env vars
+- [ ] **Test**: make a booking → check Vercel logs for `[Webhook] Signing email sent` → check client inbox for the signing link email
+
+**If/when you switch from all-inkl to Cloudflare (Phase 2):**
+- Cloudflare's DNS will need the same Mailjet SPF/DKIM TXT records re-added
+- Mailjet continues working — it sends via its own servers, not all-inkl's
+- Drop all-inkl DPA, keep Mailjet DPA + add Cloudflare DPA
+
+### DPA (Auftragsverarbeitungsvertrag) Checklist
+
+| Provider | What it processes | DPA status | Where to sign |
+|---|---|---|---|
+| **OpenAPI** | Client email, name, signed documents | ✅ Signed | console.openapi.com |
+| **Mailjet** | Client email (sending signing URL) | ⬜ Needs signing | mailjet.com → Account → GDPR |
+| **all-inkl** | Email relay, DNS hosting | ⬜ Check KAS | KAS → Verträge or support request |
+| **Cal.com** | Client name, email, booking data | ⬜ Check account | cal.com → Settings → Legal |
+| **Stripe** | Payment data (via Cal.com) | ✅ Auto-accepted on signup | stripe.com/legal |
+| **Vercel** | Serverless function logs (IP, request data) | ⬜ Check account | vercel.com → Legal |
+| **Google Analytics** | IP, pageviews, device data | ⬜ Check GA4 admin | analytics.google.com → Admin |
+| **Microsoft Clarity** | Session recordings, heatmaps | ⬜ Check account | clarity.microsoft.com |
+| **Cloudflare** (future) | DNS, email routing | N/A yet | dash.cloudflare.com |
+
 ### Other
 
-- [ ] **Renew OpenAPI API tokens** — Playground tokens expire (check console.openapi.com). Wrong Token errors mean expired tokens.
-- [ ] Switch OpenAPI from sandbox to production (`OPENAPI_SANDBOX=false`, update `OPENAPI_API_KEY` to production token, redeploy)
-- [ ] Set Cal.com price back to €150 after testing
-- [ ] Remove debug logging from api/esign-callback.js (`[Callback raw]` line) when stable
+- [ ] **Renew OpenAPI API tokens** — Production token expires 2027. Check console.openapi.com periodically.
+- [x] ~~Switch OpenAPI from sandbox to production~~ — Done: `OPENAPI_SANDBOX` removed, production token set, credits topped up (€50)
+- [x] ~~Set Cal.com price back to €150~~ — Done
+- [x] ~~Remove debug logging~~ — Done: `[Callback raw]` line removed from esign-callback.js
 - [ ] Build out coaching.html for US market
 - [ ] Create separate Cal.com event type for US coaching (USD pricing)
 - [ ] Set up Doxy.me for US video sessions (or confirm RED Medical for all)
 - [ ] Uncomment Google Ads tracking when campaign is created
 - [ ] Rotate DocuSign RSA keypair if DocuSign is ever activated (private key was shared in chat during setup)
-- [ ] Set up Cal.com Workflow for bilingual intake PDF links in booking confirmation emails (see CALCOM-WORKFLOW-SETUP.md)
 
 ## Decision Log
 
