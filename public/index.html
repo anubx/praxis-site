@@ -112,13 +112,13 @@
       platform: platform || 'calcom',
       action_type: action,
       value: 150,
-      currency: 'CHF'
+      currency: 'EUR'
     });
     // Google Ads conversion — uncomment when ready
     // gtag('event', 'conversion', {
     //   send_to: 'AW-XXXXXXXXX/CONVERSION_LABEL',
     //   value: 150,
-    //   currency: 'CHF'
+    //   currency: 'EUR'
     // });
   }
 
@@ -1063,7 +1063,7 @@
     <a href="#" class="btn-primary"
        data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
        onclick="trackBooking('calcom', 'hero_book', 'Hero CTA')">
-      Book a free consultation <span class="arrow">&rarr;</span>
+      Book a consultation <span class="arrow">&rarr;</span>
     </a>
     <a href="#about" class="btn-ghost">
       Learn more <span class="arrow">&darr;</span>
@@ -1172,22 +1172,21 @@
     <div class="reveal">
       <div class="section-label">Pricing</div>
       <div class="section-title">Transparent, clear</div>
-      <p class="section-desc">One rate for all sessions. No hidden costs, no sliding complexity. The initial consultation is free.</p>
+      <p class="section-desc">One rate for all sessions. No hidden costs, no sliding complexity.</p>
     </div>
 
     <div class="pricing-layout">
       <div class="pricing-main reveal">
         <div class="pricing-amount">
-          <span class="pricing-currency">CHF</span>
+          <span class="pricing-currency">&euro;</span>
           <span class="pricing-number">150</span>
         </div>
         <div class="pricing-per">per session &middot; 50 minutes</div>
-        <p class="pricing-note">Applies equally to individual analysis, supervision, and ongoing sessions. Initial 30-minute consultation is complimentary.</p>
+        <p class="pricing-note">Applies equally to individual analysis, supervision, and ongoing sessions.</p>
 
         <ul class="pricing-includes">
           <li><span class="check">&check;</span> Secure video session via encrypted platform</li>
           <li><span class="check">&check;</span> Flexible scheduling — daytime & evening</li>
-          <li><span class="check">&check;</span> Free 30-minute initial consultation</li>
           <li><span class="check">&check;</span> No lock-in — cancel or pause anytime</li>
           <li><span class="check">&check;</span> Invoice for insurance reimbursement (GebüH)</li>
         </ul>
@@ -1195,7 +1194,7 @@
         <a href="#" class="btn-primary" style="width: 100%; justify-content: center;"
            data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
            onclick="trackBooking('calcom', 'pricing_book', 'Pricing CTA')">
-          Book free consultation <span class="arrow">&rarr;</span>
+          Book a session <span class="arrow">&rarr;</span>
         </a>
       </div>
 
@@ -1203,8 +1202,8 @@
         <h3>Common questions</h3>
 
         <div class="pricing-faq">
-          <h4>Is the initial consultation really free?</h4>
-          <p>Yes. 30 minutes to discuss your situation and whether this approach is right for you. No obligation.</p>
+          <h4>What happens in the first session?</h4>
+          <p>We use the first meeting to discuss your situation, expectations, and whether this approach is right for you. No obligation to continue.</p>
         </div>
 
         <div class="pricing-faq">
@@ -1214,7 +1213,7 @@
 
         <div class="pricing-faq">
           <h4>Can I claim insurance?</h4>
-          <p>I provide detailed invoices referencing GebüH codes. Reimbursement depends on your supplementary insurance (Zusatzversicherung). Please check with your provider before starting.</p>
+          <p>I provide detailed invoices referencing GebüH codes. Reimbursement depends on your insurance (private full insurance, Beihilfe, or Zusatzversicherung für Heilpraktiker). Please check with your provider before starting.</p>
         </div>
 
         <div class="pricing-faq">
@@ -1263,11 +1262,11 @@
 <!-- ============ CTA ============ -->
 <section class="cta-section reveal">
   <h2>Ready to begin?</h2>
-  <p>Book a free 30-minute consultation. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment.</p>
+  <p>Book a first session. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment to continue.</p>
   <a href="#" class="btn-primary"
      data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
      onclick="trackBooking('calcom', 'cta_book', 'Bottom CTA')">
-    Schedule free consultation <span class="arrow">&rarr;</span>
+    Schedule a session <span class="arrow">&rarr;</span>
   </a>
   <div class="cta-badge">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>

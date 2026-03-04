@@ -14,8 +14,13 @@
  * ENV vars:
  *   CALCOM_WEBHOOK_SECRET  = webhook signing secret from Cal.com
  *   SITE_URL               = https://your-domain.vercel.app
- *   ESIGN_PROVIDER         = "openapi" | "docusign"
+ *   ESIGN_PROVIDER         = "openapi" | "docusign" | "none" (default: "none")
  *   (plus provider-specific vars — see esign-provider.js)
+ *
+ * Feature flags:
+ *   ESIGN_PROVIDER=none     → e-signing disabled, webhook logs booking only
+ *   ESIGN_PROVIDER=openapi  → OpenAPI EU-SES (pending data residency confirmation)
+ *   ESIGN_PROVIDER=docusign → DocuSign (inactive — $600/yr Developer plan required)
  */
 
 const crypto = require('crypto');
@@ -61,21 +66,11 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify webhook signature (log all headers for debugging)
+  // Verify webhook signature
   const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
   const signature = req.headers['x-cal-signature-256'] || req.headers['x-calcom-signature'];
 
-  console.log('[DEBUG] Webhook received. Headers:', JSON.stringify({
-    'x-cal-signature-256': req.headers['x-cal-signature-256'] || 'missing',
-    'x-calcom-signature': req.headers['x-calcom-signature'] || 'missing',
-    'content-type': req.headers['content-type'],
-  }));
-  console.log('[DEBUG] CALCOM_WEBHOOK_SECRET set:', !!process.env.CALCOM_WEBHOOK_SECRET);
-  console.log('[DEBUG] ESIGN_PROVIDER:', process.env.ESIGN_PROVIDER);
-
-  // Temporarily skip signature verification for debugging
-  // TODO: Re-enable once the correct header name is confirmed
-  if (false && process.env.CALCOM_WEBHOOK_SECRET) {
+  if (process.env.CALCOM_WEBHOOK_SECRET) {
     if (!verifyCalcomSignature(rawBody, signature, process.env.CALCOM_WEBHOOK_SECRET)) {
       console.error('Invalid webhook signature');
       return res.status(401).json({ error: 'Invalid signature' });
@@ -101,20 +96,30 @@ module.exports = async function handler(req, res) {
 
     const lang = detectLanguage(booking);
     const siteUrl = process.env.SITE_URL || 'https://praxis-site-vert.vercel.app';
+    const provider = process.env.ESIGN_PROVIDER || 'none';
+
+    // Feature flag: if e-signing is disabled, just log the booking
+    if (provider === 'none') {
+      console.log(`Booking received: ${attendee.name} <${attendee.email}> [${lang}] — e-signing disabled, send intake docs manually`);
+      return res.status(200).json({
+        success: true,
+        skipped: true,
+        reason: 'esign_disabled',
+        attendee: { name: attendee.name, email: attendee.email, lang },
+      });
+    }
 
     // Check if this client has already signed intake documents
     const alreadySigned = await hasAlreadySigned(attendee.email);
 
     if (alreadySigned) {
-      console.log(`Client ${attendee.email} already signed — skipping e-sign request`);
+      console.log(`Client already signed — skipping e-sign request`);
       return res.status(200).json({
         success: true,
         skipped: true,
         reason: 'already_signed',
       });
     }
-
-    console.log(`Sending e-sign request: ${attendee.name} <${attendee.email}> [${lang}]`);
 
     const result = await sendForSignature({
       name: attendee.name,

@@ -3,7 +3,7 @@
  * Swappable between OpenAPI (EU-SES) and DocuSign
  *
  * ENV vars required:
- *   ESIGN_PROVIDER        = "openapi" | "docusign"
+ *   ESIGN_PROVIDER        = "openapi" | "docusign" | "none" (default: "none")
  *
  *   # OpenAPI
  *   OPENAPI_API_KEY        = your openapi.com API key
@@ -27,41 +27,68 @@ const INTAKE_DOCS = {
 async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
   const docUrl = `${siteUrl}${INTAKE_DOCS[lang] || INTAKE_DOCS.en}`;
 
+  // Split name into first/last for OpenAPI's name/surname fields
+  const nameParts = name.trim().split(/\s+/);
+  const firstName = nameParts[0] || name;
+  const surname = nameParts.slice(1).join(' ') || name;
+
+  // OpenAPI EU-SES API spec (v1.0.17):
+  // - signers[].authentication is an array of strings: ["email"] or ["sms"]
+  // - signers[].signatures[].page is a number (0-indexed, 0 = first page)
+  // - signers[].signatures[].x and y are strings
+  // - inputDocuments can be a URL string directly
+  // - options.signatureMode goes in options, not per-signer
+  // - callback.method defaults to "JSON"
   const body = {
-    title: lang === 'de'
-      ? 'Aufnahmedokumente — Praxis Robert Rozek'
-      : 'Intake Documents — Robert Rozek Practice',
-    description: lang === 'de'
-      ? 'Bitte lesen und unterschreiben Sie die folgenden Dokumente vor Ihrer ersten Sitzung.'
-      : 'Please read and sign the following documents before your first session.',
-    inputDocuments: [{ uri: docUrl }],
     signers: [
       {
-        name,
+        name: firstName,
+        surname: surname,
         email,
         mobile: phone || undefined,
-        authentication: phone ? [{ type: 'otp', channel: 'sms' }] : [{ type: 'otp', channel: 'email' }],
-        signatureMode: ['typed', 'drawn'],
+        authentication: phone ? ['sms'] : ['email'],
+        message: lang === 'de'
+          ? 'Ihr Verifizierungscode für die Aufnahmedokumente: '
+          : 'Your verification code for the intake documents: ',
         signatures: [
           {
-            page: 'last',
-            x: 100,
-            y: 600,
-            name: 'client_signature',
+            page: 8,  // 0-indexed: page 9 (last page of 9-page PDF) = index 8
+            x: '100',
+            y: '600',
           },
         ],
       },
     ],
+    inputDocuments: docUrl,
     callback: {
       url: process.env.OPENAPI_CALLBACK_URL,
+      method: 'JSON',
+      field: 'data',
     },
     options: {
-      brandColor: '#1c1917',
-      redirectUrl: `${siteUrl}/signed?status=complete`,
+      signatureMode: ['typed', 'drawn'],
+      signerMustRead: true,
+      timezone: 'Europe/Berlin',
+      ui: {
+        completeUrl: `${siteUrl}/signed?status=complete`,
+        cancelUrl: `${siteUrl}/signed?status=cancelled`,
+        sidebarBackgroundColor: '#1c1917',
+        sidebarTitleColor: '#fafaf9',
+        sidebarTextColor: '#b8976a',
+        buttonBackgroundColor: '#1c1917',
+        buttonTextColor: '#fafaf9',
+        signButtonBackgroundColor: '#b8976a',
+        signButtonTextColor: '#1c1917',
+      },
     },
   };
 
-  const res = await fetch('https://esignature.openapi.com/EU-SES', {
+  // Use test endpoint if OPENAPI_SANDBOX=true, otherwise production
+  const baseUrl = process.env.OPENAPI_SANDBOX === 'true'
+    ? 'https://test.esignature.openapi.com'
+    : 'https://esignature.openapi.com';
+
+  const res = await fetch(`${baseUrl}/EU-SES`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,9 +105,9 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
   const data = await res.json();
   return {
     provider: 'openapi',
-    requestId: data.id || data.requestId,
+    requestId: data.id,
     signingUrl: data.signers?.[0]?.url || null,
-    status: data.status,
+    status: data.state,
     raw: data,
   };
 }
@@ -209,14 +236,17 @@ async function sendViaDocuSign({ name, email, phone, lang, siteUrl }) {
  */
 async function hasSignedViaOpenAPI(email) {
   try {
-    const res = await fetch(
-      `https://esignature.openapi.com/signatures?email=${encodeURIComponent(email)}&status=COMPLETED`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAPI_API_KEY}`,
-        },
-      }
-    );
+    const baseUrl = process.env.OPENAPI_SANDBOX === 'true'
+      ? 'https://test.esignature.openapi.com'
+      : 'https://esignature.openapi.com';
+
+    // GET /signatures returns a list of all signature requests
+    // Filter client-side by signer email and completed state
+    const res = await fetch(`${baseUrl}/signatures`, {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAPI_API_KEY}`,
+      },
+    });
 
     if (!res.ok) {
       console.warn(`OpenAPI signature check failed (${res.status}), proceeding with send`);
@@ -224,8 +254,13 @@ async function hasSignedViaOpenAPI(email) {
     }
 
     const data = await res.json();
-    const completed = Array.isArray(data) ? data : data.data || data.results || [];
-    return completed.length > 0;
+    const signatures = Array.isArray(data) ? data : data.data || [];
+
+    // Check if any completed signature has this email as a signer
+    return signatures.some(
+      (sig) => sig.state === 'COMPLETED' &&
+        sig.signers?.some((s) => s.email?.toLowerCase() === email.toLowerCase())
+    );
   } catch (err) {
     console.warn('OpenAPI signature check error, proceeding with send:', err.message);
     return false;
@@ -278,13 +313,14 @@ async function hasSignedViaDocuSign(email) {
  * @returns {Promise<boolean>} - true if already signed
  */
 async function hasAlreadySigned(email) {
-  const provider = process.env.ESIGN_PROVIDER || 'openapi';
+  const provider = process.env.ESIGN_PROVIDER || 'none';
 
   switch (provider) {
     case 'openapi':
       return hasSignedViaOpenAPI(email);
     case 'docusign':
       return hasSignedViaDocuSign(email);
+    case 'none':
     default:
       return false;
   }
@@ -303,13 +339,15 @@ async function hasAlreadySigned(email) {
  * @returns {Promise<Object>}     - { provider, requestId, signingUrl, status, raw }
  */
 async function sendForSignature(opts) {
-  const provider = process.env.ESIGN_PROVIDER || 'openapi';
+  const provider = process.env.ESIGN_PROVIDER || 'none';
 
   switch (provider) {
     case 'openapi':
       return sendViaOpenAPI(opts);
     case 'docusign':
       return sendViaDocuSign(opts);
+    case 'none':
+      throw new Error('E-signing is disabled (ESIGN_PROVIDER=none). Set to "openapi" or "docusign" to enable.');
     default:
       throw new Error(`Unknown e-sign provider: ${provider}`);
   }
