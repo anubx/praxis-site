@@ -72,9 +72,9 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
     options: {
       signatureMode: ['typed', 'drawn'],
       timezone: 'Europe/Berlin',
-      completeUrl: `${siteUrl}/signed?status=complete`,
-      cancelUrl: `${siteUrl}/signed?status=cancelled`,
       ui: {
+        completeUrl: `${siteUrl}/signed?status=complete`,
+        cancelUrl: `${siteUrl}/signed?status=cancelled`,
         sidebarBackgroundColor: '#1c1917',
         sidebarTextColor: '#b8976a',
         headerTitleColor: '#1c1917',
