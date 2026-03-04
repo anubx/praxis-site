@@ -112,8 +112,8 @@
 
 ### 15. Canonical URL Points to Vercel Subdomain
 **File:** `public/index.html` (line 9)  
-**Issue:** `<link rel="canonical" href="https://praxis-site-vert.vercel.app/">` — should be the production domain when going live.  
-**Fix:** Update when custom domain is configured.
+**Issue:** `<link rel="canonical" href="https://praxis-site-vert.vercel.app/">` — should be the production domain when going live.
+**Fix:** ✅ Updated to `https://robertrozek.de/` (2026-03-04).
 
 ---
 

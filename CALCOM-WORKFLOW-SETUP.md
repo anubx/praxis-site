@@ -39,7 +39,7 @@ vielen Dank für Ihre Buchung. Ich freue mich auf unser Gespräch am {event_date
 Vor unserer ersten Sitzung bitte ich Sie, die folgenden Aufnahmedokumente zu lesen:
 
 📄 Aufnahmedokumente (PDF):
-https://praxis-site-vert.vercel.app/docs/intake-combined-de.pdf
+https://robertrozek.de/docs/intake-combined-de.pdf
 
 Das Dokument enthält:
 • Behandlungsvertrag (Dienstvertrag nach BGB §§ 611 ff.)
@@ -72,7 +72,7 @@ Thank you for booking. I look forward to our session on {event_date} at {event_t
 Before our first session, please review the intake documents:
 
 📄 Intake Documents (PDF):
-https://praxis-site-vert.vercel.app/docs/intake-combined-en.pdf
+https://robertrozek.de/docs/intake-combined-en.pdf
 
 The document includes:
 • Service agreement

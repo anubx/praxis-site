@@ -346,7 +346,7 @@ async function hasAlreadySigned(email) {
  * @param {string} opts.email     - Client email
  * @param {string} [opts.phone]   - Client phone (for OTP)
  * @param {string} opts.lang      - "de" or "en"
- * @param {string} opts.siteUrl   - Base URL of the site (e.g., https://praxis-site-vert.vercel.app)
+ * @param {string} opts.siteUrl   - Base URL of the site (e.g., https://robertrozek.de)
  * @returns {Promise<Object>}     - { provider, requestId, signingUrl, status, raw }
  */
 async function sendForSignature(opts) {

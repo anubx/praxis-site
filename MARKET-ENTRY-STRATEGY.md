@@ -266,7 +266,7 @@ Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical).
 | **Legal pages** | Fix Impressum | Add AT/CH disclaimers | UK terms of service | US coaching disclaimer + terms |
 | **Cookie banner** | Fix language | Same | Adapt for UK (ICO guidance) | Simpler (no GDPR, but CCPA) |
 | **Intake docs** | DE + EN (current) | Same | EN (current) | US-specific coaching agreement |
-| **Domain** | praxis-site-vert.vercel.app → custom | Same | Same or .co.uk | Same or .com |
+| **Domain** | robertrozek.de | Same | Same or .co.uk | Same or .com |
 
 ### Revenue Projections (Conservative)
 

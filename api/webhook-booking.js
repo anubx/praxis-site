@@ -99,7 +99,7 @@ module.exports = async function handler(req, res) {
     }
 
     const lang = detectLanguage(booking);
-    const siteUrl = process.env.SITE_URL || 'https://praxis-site-vert.vercel.app';
+    const siteUrl = process.env.SITE_URL || 'https://robertrozek.de';
     const provider = process.env.ESIGN_PROVIDER || 'none';
 
     // Feature flag: if e-signing is disabled, just log the booking
