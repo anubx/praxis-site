@@ -22,12 +22,16 @@ module.exports = async function handler(req, res) {
     const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const provider = process.env.ESIGN_PROVIDER || 'openapi';
 
+    // Log full callback payload for debugging
+    console.log(`[Callback raw] ${JSON.stringify(payload).slice(0, 2000)}`);
+
     if (provider === 'openapi') {
       // OpenAPI sends callback with payload in the 'data' field (configured in callback.field)
       const inner = payload.data || payload;
-      const { id, state, signers } = inner;
-      const status = state || payload.status;
-      console.log(`[OpenAPI callback] Request ${id}: ${status}`);
+      const id = inner.id || payload.id;
+      const status = inner.state || inner.status || payload.state || payload.status;
+      const errorMsg = inner.errorMessage || inner.errorNumber;
+      console.log(`[OpenAPI callback] Request ${id}: ${status}${errorMsg ? ' — error: ' + errorMsg : ''}`);
 
       if (status === 'COMPLETED') {
         console.log(`Signing completed for request ${id}`);
