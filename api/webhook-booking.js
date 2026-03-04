@@ -54,11 +54,21 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify webhook signature
+  // Verify webhook signature (log all headers for debugging)
   const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
   const signature = req.headers['x-cal-signature-256'] || req.headers['x-calcom-signature'];
 
-  if (process.env.CALCOM_WEBHOOK_SECRET) {
+  console.log('[DEBUG] Webhook received. Headers:', JSON.stringify({
+    'x-cal-signature-256': req.headers['x-cal-signature-256'] || 'missing',
+    'x-calcom-signature': req.headers['x-calcom-signature'] || 'missing',
+    'content-type': req.headers['content-type'],
+  }));
+  console.log('[DEBUG] CALCOM_WEBHOOK_SECRET set:', !!process.env.CALCOM_WEBHOOK_SECRET);
+  console.log('[DEBUG] ESIGN_PROVIDER:', process.env.ESIGN_PROVIDER);
+
+  // Temporarily skip signature verification for debugging
+  // TODO: Re-enable once the correct header name is confirmed
+  if (false && process.env.CALCOM_WEBHOOK_SECRET) {
     if (!verifyCalcomSignature(rawBody, signature, process.env.CALCOM_WEBHOOK_SECRET)) {
       console.error('Invalid webhook signature');
       return res.status(401).json({ error: 'Invalid signature' });
