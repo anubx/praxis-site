@@ -112,7 +112,9 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
     throw new Error(`OpenAPI EU-SES error ${res.status}: ${err}`);
   }
 
-  const data = await res.json();
+  const json = await res.json();
+  // OpenAPI wraps the response in { data: { ... }, success: true }
+  const data = json.data || json;
   return {
     provider: 'openapi',
     requestId: data.id,

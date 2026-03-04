@@ -23,7 +23,10 @@ module.exports = async function handler(req, res) {
     const provider = process.env.ESIGN_PROVIDER || 'openapi';
 
     if (provider === 'openapi') {
-      const { id, status, signers } = payload;
+      // OpenAPI sends callback with payload in the 'data' field (configured in callback.field)
+      const inner = payload.data || payload;
+      const { id, state, signers } = inner;
+      const status = state || payload.status;
       console.log(`[OpenAPI callback] Request ${id}: ${status}`);
 
       if (status === 'COMPLETED') {
