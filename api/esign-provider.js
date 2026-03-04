@@ -54,12 +54,14 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
         email,
         mobile: phone || undefined,
         authentication: phone ? 'sms' : 'email',
+        // Place client signature on "Unterschrift des Klienten" line of each section.
+        // Coordinates use bottom-left origin (PDF standard): y=0 at page bottom.
+        // Page height is 841.89pts (A4). Converted from pdfplumber top-origin coords.
         signatures: [
-          {
-            page: 8,  // 0-indexed: page 9 (last page of 9-page PDF) = index 8
-            x: '100',
-            y: '600',
-          },
+          { page: 1, x: '77', y: '290' },   // Behandlungsvertrag — line at ~546 from top
+          { page: 3, x: '77', y: '326' },   // Einwilligungserklärung — line at ~510 from top
+          { page: 5, x: '77', y: '128' },   // Datenschutzvereinbarung — line at ~708 from top
+          { page: 8, x: '77', y: '428' },   // Einwilligung Video — line at ~408 from top
         ],
       },
     ],
