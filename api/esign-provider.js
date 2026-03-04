@@ -32,24 +32,28 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
   const firstName = nameParts[0] || name;
   const surname = nameParts.slice(1).join(' ') || name;
 
-  // OpenAPI EU-SES API spec (v1.0.17):
-  // - signers[].authentication is an array of strings: ["email"] or ["sms"]
+  // OpenAPI EU-SES API — aligned with playground (console.openapi.com):
+  // - signers[].authentication is a STRING: "email" or "sms" (NOT an array)
   // - signers[].signatures[].page is a number (0-indexed, 0 = first page)
   // - signers[].signatures[].x and y are strings
   // - inputDocuments can be a URL string directly
-  // - options.signatureMode goes in options, not per-signer
+  // - options.signatureMode is an array of strings: ["typed", "drawn"]
+  // - completeUrl/cancelUrl go inside options (SES Options section)
   // - callback.method defaults to "JSON"
   const body = {
+    title: lang === 'de'
+      ? 'Aufnahmedokumente — Praxis Robert Rozek'
+      : 'Intake Documents — Robert Rozek Practice',
+    description: lang === 'de'
+      ? 'Bitte lesen und unterschreiben Sie die Aufnahmedokumente vor Ihrer ersten Sitzung.'
+      : 'Please read and sign the intake documents before your first session.',
     signers: [
       {
         name: firstName,
         surname: surname,
         email,
         mobile: phone || undefined,
-        authentication: phone ? ['sms'] : ['email'],
-        message: lang === 'de'
-          ? 'Ihr Verifizierungscode für die Aufnahmedokumente: '
-          : 'Your verification code for the intake documents: ',
+        authentication: phone ? 'sms' : 'email',
         signatures: [
           {
             page: 8,  // 0-indexed: page 9 (last page of 9-page PDF) = index 8
@@ -67,18 +71,24 @@ async function sendViaOpenAPI({ name, email, phone, lang, siteUrl }) {
     },
     options: {
       signatureMode: ['typed', 'drawn'],
-      signerMustRead: true,
       timezone: 'Europe/Berlin',
+      completeUrl: `${siteUrl}/signed?status=complete`,
+      cancelUrl: `${siteUrl}/signed?status=cancelled`,
       ui: {
-        completeUrl: `${siteUrl}/signed?status=complete`,
-        cancelUrl: `${siteUrl}/signed?status=cancelled`,
         sidebarBackgroundColor: '#1c1917',
-        sidebarTitleColor: '#fafaf9',
         sidebarTextColor: '#b8976a',
-        buttonBackgroundColor: '#1c1917',
-        buttonTextColor: '#fafaf9',
+        headerTitleColor: '#1c1917',
+        headerSubtitleColor: '#a8a29e',
+        headerBackgroundColor: '#fafaf9',
+        footerBackgroundColor: '#fafaf9',
+        buttonBackgroundColor: '#fafaf9',
+        buttonBackgroundColorHover: '#e7e5e4',
+        buttonTextColor: '#1c1917',
+        buttonTextColorHover: '#1c1917',
         signButtonBackgroundColor: '#b8976a',
         signButtonTextColor: '#1c1917',
+        signButtonTextColorHover: '#fafaf9',
+        signButtonBackgroundColorHover: '#a68555',
       },
     },
   };
