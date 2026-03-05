@@ -166,16 +166,20 @@ Declined. Sends hashed client emails to Google for ad matching. For a therapy pr
 
 ---
 
-## Before Launching (Checklist)
-- [ ] Manually pause campaign (extra safety beyond future start date)
-- [ ] Add negative keywords (list above)
-- [ ] Link GA4 to Google Ads
-- [ ] Set up conversion tracking (get AW-ID, update index.html code)
+## Completed Post-Creation Steps
+
+- [x] **Manually paused campaign** — Status set to Paused from dashboard (2026-03-05)
+- [x] **Added 15 negative keywords** at campaign level (broad match): Ausbildung, Prüfung, Studium, kostenlos, gratis, Krankenkasse, Kassenzulassung, Stellenangebote, Jobs, Gehalt, Praktikum, Fernstudium, Therapeut werden, Heilpraktiker werden, Prüfungsfragen
+- [x] **GA4 linked to Google Ads** — Property "private-practice" (526213594) was already linked (since Feb 27, 2026). App and web metrics: On. Google Analytics audiences import: Off (DSGVO — no remarketing for health data).
+
+## Before Launching (Remaining Checklist)
+
+- [ ] Set up conversion tracking (get AW-ID from conversion action, update index.html code, push) — optional, GA4 page view tracking works as fallback
 - [ ] Remove end date (currently March 31 — should be open-ended)
-- [ ] Apply promo code (€400 bonus)
+- [ ] Apply promo code (€400 bonus — must apply within 14 days of account creation)
 - [ ] Change start date to actual launch date
 - [ ] Enable campaign
 
 ---
 
-*Log created 2026-03-05. Update after each campaign change.*
+*Log created 2026-03-05. Last updated 2026-03-05 (negative keywords, pause, GA4 link confirmed).*
