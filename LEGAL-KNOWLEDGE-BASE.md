@@ -1,4 +1,4 @@
-# Legal Knowledge Base — Psychoanalytic Practice
+# Legal Knowledge Base — Psychotherapy Practice (n. d. HeilprG)
 
 **Scope:** All laws, regulations, and compliance requirements relevant to operating an online psychoanalytic practice from Munich, Germany, serving clients in DE, AT, CH, UK, and USA.  
 **Date:** 2026-03-04  
@@ -205,12 +205,20 @@ For psychotherapy sessions, the video platform must:
 3. Not store or access session content
 4. Preferably be KBV-certified (for credibility, not legally required for HP-Psych)
 
-**RED Medical (RED connect plus):**
+**Cal Video (via Cal.com):** (current — switched from RED Medical 2026-03-05)
+- End-to-end encrypted
+- No recording, no third-party access
+- DSGVO-compliant
+- Integrated into Cal.com booking flow (zero additional cost)
+- Not KBV-certified (unnecessary for Heilpraktiker — KBV certification only required for approbierte Psychotherapeuten in Telematikinfrastruktur)
+
+**RED Medical (RED connect plus):** (previously used, now replaced)
 - KBV-certified (Kassenärztliche Bundesvereinigung)
 - Peer-to-peer, end-to-end encrypted
 - No recording, no third-party access
 - DSGVO-compliant, German company
 - Works internationally (no IP restrictions)
+- **Reason for switch:** KBV certification unnecessary for Heilpraktiker. Cal Video simpler and integrated.
 
 ---
 

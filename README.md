@@ -1,4 +1,4 @@
-# Psychoanalytic Practice — Landing Page
+# Psychotherapy Practice (n. d. HeilprG) — Landing Page
 
 Static site + serverless functions on Vercel.
 
@@ -14,25 +14,36 @@ git push  # auto-deploys via GitHub → Vercel
 
 | File | Purpose | When to edit |
 |---|---|---|
-| `public/index.html` | Main landing page (DE/EU market, cal.com embed) | Bio, pricing, tracking IDs, styling |
+| `public/index.html` | Main landing page (DE/EU market, inline Cal.com embed) | Bio, pricing, tracking IDs, styling |
 | `public/coaching.html` | US coaching variant (placeholder) | Build out for US market launch |
 | `public/datenschutz.html` | Privacy policy (DSGVO) | Data processing details, tool changes |
 | `public/impressum.html` | Legal notice (§ 5 DDG) | Address, credentials, authority |
+| `public/variant-doctolib.html` | Legacy variant page (Doctolib) | Kept for reference |
+| `public/variant-redmedical.html` | Legacy variant page (RED Medical) | Kept for reference |
 | `public/docs/*.pdf` | Client intake documents (2 combined PDFs, 6 pages each) | Regenerate via `generate-intake-pdfs.py` |
+| `public/favicon.svg` | Site favicon | Change icon/colors |
+| `public/og-image.png` | Open Graph social sharing image | Replace for different preview |
 | `generate-intake-pdfs.py` | reportlab script to regenerate combined intake PDFs | Pricing, qualifications, signature layout |
-| `api/webhook-booking.js` | Cal.com webhook → e-signature flow | Webhook logic, language detection |
+| `api/webhook-booking.js` | Cal.com webhook → e-signature + receipt email flow | Webhook logic, language detection, receipt PDF |
+| `api/webhook-cancellation.js` | Cal.com cancellation webhook → late cancellation handling | Cancellation logic, refund policy |
+| `api/generate-receipt.js` | Zahlungsbestätigung (payment confirmation) PDF generator | Receipt layout, GebüH codes, practice details |
 | `api/esign-provider.js` | Swappable e-signature module (OpenAPI / DocuSign) | Provider config, signature placement |
 | `api/esign-callback.js` | Callback from e-signature providers | Post-signing actions (email, storage) |
+| `tools/generate-rechnung.py` | Monthly Rechnung (invoice) generator for PKV submission | GebüH codes, client data, invoice layout |
+| `tools/sessions.json` | Client session data for Rechnung generation | Add client sessions before generating invoices |
+| `fonts/DancingScript.ttf` | Google Fonts handwriting font (for therapist signature) | N/A |
 | `vercel.json` | Routing, headers, serverless config | New routes, security headers |
 | `.env.example` | Template for all required env vars | Reference when setting up new env |
 
 ### Common edits
 
-- **Change session price**: search `€150` in index.html + update Cal.com event type + regenerate PDFs
-- **Change cal.com link**: search `rozek.therapy/session` in index.html (4 occurrences — nav, hero, pricing, CTA)
-- **Switch e-sign provider**: change `ESIGN_PROVIDER` env var in Vercel (`openapi` or `docusign`)
+- **Change session price**: search `€150` in index.html + update Cal.com event type + update `SESSION_PRICE_CENTS` env var in Vercel + regenerate PDFs
+- **Change cal.com link**: search `rozek.therapy/session` in index.html (booking buttons use `href="#book"` to scroll to inline embed)
+- **Switch e-sign provider**: change `ESIGN_PROVIDER` env var in Vercel (`openapi` or `docusign` or `none`)
 - **Update tracking IDs**: search `G-PJGQ4RBY5R` (GA4), `vnzaph1mar` (Clarity), `AW-` (Ads)
-- **Update address/email**: search `Augsburgerstraße 6` and `rozek.therapy@pm.me`
+- **Update address/email**: search `Augsburgerstraße 6` and `praxis@robertrozek.de`
+- **Update phone**: search `+49 157 5469 5230` in generate-receipt.js, generate-rechnung.py, impressum.html
+- **Generate monthly invoices**: edit `tools/sessions.json` with client data, then run `python3 tools/generate-rechnung.py`
 
 ### Placeholders still remaining
 
@@ -46,48 +57,83 @@ git push  # auto-deploys via GitHub → Vercel
 
 ```
 public/
-  index.html               — Main landing page (DE/EU, cal.com embed + tracking)
+  index.html               — Main landing page (DE/EU, inline Cal.com embed + tracking)
   coaching.html             — US coaching variant (placeholder)
   datenschutz.html          — Privacy policy (DSGVO)
   impressum.html            — Legal notice (§ 5 DDG)
+  variant-doctolib.html     — Legacy variant (Doctolib)
+  variant-redmedical.html   — Legacy variant (RED Medical)
+  favicon.svg               — Site favicon
+  og-image.png              — Open Graph social sharing image (1200x630)
   docs/
     intake-combined-de.pdf   — All 4 DE docs merged (6 pages, single signature block)
     intake-combined-en.pdf   — All 4 EN docs merged (6 pages, single signature block)
 api/
-  webhook-booking.js         — Cal.com BOOKING_CREATED handler
+  webhook-booking.js         — Cal.com BOOKING_CREATED handler + receipt email
+  webhook-cancellation.js    — Cal.com cancellation webhook handler
+  generate-receipt.js        — Zahlungsbestätigung PDF generator (PDFKit, in-memory)
   esign-provider.js          — Swappable OpenAPI / DocuSign module
   esign-callback.js          — Signature completion callback
+tools/
+  generate-rechnung.py       — Monthly Rechnung (invoice) generator (reportlab)
+  sessions.json              — Client session data for invoice generation
+  .invoice_counter           — Auto-managed sequential invoice number tracker
+  rechnungen/                — Generated invoice PDFs (gitignored)
+fonts/
+  DancingScript.ttf          — Google Fonts handwriting font (for therapist signature)
 generate-intake-pdfs.py      — reportlab script to regenerate combined intake PDFs
-DancingScript.ttf            — Google Fonts handwriting font (for therapist signature)
 vercel.json                  — Vercel routing + headers + function config
 .env.example                 — Template for env vars
 ```
 
 ## Stack
 
-- **Scheduling**: Cal.com (embedded modal on page, `rozek.therapy/session`)
+- **Scheduling**: Cal.com (inline embed on page, `rozek.therapy/session`)
 - **Payment**: Stripe (via Cal.com native integration, €150 prepay)
 - **E-signatures**: OpenAPI EU-SES (EU market, active) / DocuSign (US market, feature-flagged)
-- **Video (DE/EU)**: RED Medical — RED connect plus (peer-to-peer, E2E encrypted, DSGVO)
-- **Video (US)**: Doxy.me (planned) or RED Medical
+- **Email (transactional)**: all-inkl SMTP via nodemailer (signing URLs, receipt PDFs)
+- **Video**: Cal Video (via Cal.com, encrypted, DSGVO-compliant)
+- **Receipts**: Automated Zahlungsbestätigung PDF per booking (PDFKit) + monthly Rechnung generator (reportlab/Python)
 - **Analytics**: GA4 (`G-PJGQ4RBY5R`) + Microsoft Clarity (`vnzaph1mar`)
-- **Ads**: Google Ads (pending campaign creation)
+- **Ads**: Google Ads (pending campaign creation — €400 credits available via Google promotion)
 - **Hosting**: Vercel (static + serverless functions)
 
 ## Booking Flow
 
 ```
 Visitor lands on site
-  → Clicks "Book" → Cal.com modal opens
+  → Scrolls to #book section (or clicks any "Book" button which scrolls there)
+  → Inline Cal.com calendar renders with side-by-side layout
   → Picks time slot → Stripe collects €150 prepayment
   → Booking confirmed → Cal.com fires BOOKING_CREATED webhook
-  → /api/webhook-booking receives it
-  → Checks e-sign provider: has this email already signed?
-    → YES: skip (returning client)
-    → NO: send combined intake PDF for e-signature
-  → Client signs documents via DocuSign/OpenAPI
-  → Video session via RED Medical / Doxy.me
+  → /api/webhook-booking receives it:
+    1. Detects language (de/en) from attendee timezone/locale
+    2. If ESIGN_PROVIDER != "none":
+       → Sends combined intake PDF for e-signature via OpenAPI/DocuSign
+       → Sends signing URL to client via SMTP (all-inkl)
+    3. Sends Zahlungsbestätigung (payment receipt) PDF via email
+       → PDF generated in-memory by generate-receipt.js (PDFKit)
+       → Includes GebüH code, §4 UStG note, reimbursement notice
+       → BCC to practice email for records
+  → Client signs intake documents (if e-sign enabled)
+  → Video session via Cal Video
 ```
+
+### Cancellation Flow
+
+```
+Client cancels booking
+  → Cal.com fires BOOKING_CANCELLED webhook → /api/webhook-cancellation
+  → Checks if cancellation is < 48h before session
+    → YES (late): sends late cancellation email, can charge via Stripe
+    → NO: sends confirmation email, processes refund
+```
+
+### Invoice System (Two-Tier)
+
+**Tier 1 — Automated (per booking):** Zahlungsbestätigung (payment confirmation) — lightweight PDF with GebüH code, no address/DOB/diagnosis. Sent automatically via webhook. NOT sufficient for PKV insurance submission.
+
+**Tier 2 — Manual (monthly):** Full Rechnung (invoice) — proper German invoice with client address, DOB, ICD-10 diagnosis, multiple sessions, sequential invoice number. Generated locally via `python3 tools/generate-rechnung.py`. Contains DSGVO Art. 9 health data — intentionally NOT automated through webhooks.
 
 ## Environment Variables (Vercel)
 
@@ -98,18 +144,23 @@ All set in Vercel Dashboard → Settings → Environment Variables → All Envir
 | `ESIGN_PROVIDER` | `openapi` or `docusign` or `none` — switches e-sign provider |
 | `SITE_URL` | `https://robertrozek.de` |
 | `CALCOM_WEBHOOK_SECRET` | Cal.com webhook signing secret (must match Cal.com webhook config) |
+| `SESSION_PRICE_CENTS` | Session price in cents (default: `15000` = €150). Used by webhook-booking.js and webhook-cancellation.js |
+| `SMTP_HOST` | all-inkl SMTP host (e.g., `w01d4968.kasserver.com`) |
+| `SMTP_PORT` | SMTP port (default: `587`) |
+| `SMTP_USER` | SMTP username / sender email (e.g., `praxis@robertrozek.de`) |
+| `SMTP_PASS` | SMTP password |
+| `SMTP_FROM_NAME` | Sender display name (default: `Praxis Robert Rozek`) |
+| `STRIPE_SECRET_KEY` | Stripe API secret key (for refund processing in webhook-cancellation.js) |
 | `OPENAPI_API_KEY` | OpenAPI.com API token (hex format, from console.openapi.com) |
 | `OPENAPI_CALLBACK_URL` | `https://robertrozek.de/api/esign-callback` |
 | `OPENAPI_SANDBOX` | `true` for sandbox (`test.esignature.openapi.com`), omit or `false` for production |
-| `MAILJET_API_KEY` | Mailjet API key (from mailjet.com → API Keys) |
-| `MAILJET_SECRET_KEY` | Mailjet secret key |
-| `MAILJET_FROM_EMAIL` | Sender email, e.g. `praxis@robertrozek.de` (must be verified domain in Mailjet) |
-| `MAILJET_FROM_NAME` | Sender display name, e.g. `Praxis Robert Rozek` |
 | `DOCUSIGN_INTEGRATION_KEY` | DocuSign OAuth integration key (only if using DocuSign) |
 | `DOCUSIGN_USER_ID` | DocuSign user GUID — NOT the keypair ID! (only if using DocuSign) |
 | `DOCUSIGN_ACCOUNT_ID` | DocuSign API account ID in GUID format (only if using DocuSign) |
 | `DOCUSIGN_BASE_URL` | `https://demo.docusign.net/restapi` (sandbox) or `https://eu.docusign.net/restapi` (production EU) |
 | `DOCUSIGN_PRIVATE_KEY` | Base64-encoded RSA private key (only if using DocuSign) |
+
+**Removed:** `MAILJET_*` env vars — Mailjet was abandoned (compliance team blocked sending from `praxis@robertrozek.de`). Replaced by all-inkl SMTP via nodemailer (`SMTP_*` vars).
 
 ## Cal.com Setup
 
@@ -201,10 +252,10 @@ DPA signed, integration tested end-to-end, active for EU market.
 |---|---|---|
 | **Page** | `index.html` | `coaching.html` (placeholder) |
 | **Route** | `/` | `/coaching` |
-| **Framing** | Psychotherapie / Psychologische Beratung | Psychoanalytic Coaching |
+| **Framing** | Psychotherapie (n. d. HeilprG) | Psychoanalytic Coaching |
 | **Price** | €150 | $150 |
 | **E-sign** | OpenAPI EU-SES (active) | DocuSign US (or OpenAPI) |
-| **Video** | RED Medical (DSGVO) | Doxy.me or RED Medical |
+| **Video** | Cal Video (via Cal.com, encrypted) | Cal Video or Zoom |
 | **Legal** | Heilpraktikergesetz, DSGVO, eIDAS | No HIPAA (private pay), CCPA notice |
 | **Cal.com** | `rozek.therapy/session` | Separate event type (USD) |
 
@@ -266,6 +317,28 @@ DPA signed, integration tested end-to-end, active for EU market.
 **Cause**: `page: -1` (last page shorthand) only works for QES, not EU-SES. The API silently fails.
 **Fix**: Use the explicit 1-based page number (e.g., `page: 6` for the last page of a 6-page PDF).
 
+### 13. Cal.com popup modal cannot be kept open on outside click
+**Symptom**: Cal.com popup modal closes when user clicks outside it. Attempted CSS (`pointer-events: none` on overlay) and JS (capture-phase click interceptor) fixes.
+**Root cause**: Cal.com popup runs inside a cross-origin iframe. Parent page CSS/JS cannot reach into the iframe DOM. No `postMessage` API exposed by Cal.com for this.
+**Fix**: Abandoned popup approach entirely. Switched to **inline embed** (`Cal("inline", {...})`) which renders the calendar directly on the page. All booking buttons now scroll to `#book` section.
+
+### 14. Cal.com inline embed renders in stacked mobile layout
+**Symptom**: At `max-width: 480px`, the inline Cal.com embed renders calendar and time slots stacked vertically, making it taller than the viewport. User described it as "too big & clunky."
+**Fix**: Changed `max-width` to `900px`, which triggers Cal.com's side-by-side layout (calendar left, time slots right).
+
+### 15. Rechnung PDF description column overlaps amount column
+**Symptom**: GebüH description text bleeds into the EUR amount column on generated invoices.
+**Fix**: Added `desc_max_width = col_amount - col_desc - 80` in `generate-rechnung.py` to cap description width and leave space for the amount column.
+
+### 16. Cal.com PayPal — only one payment type per event type
+**Symptom**: After enabling PayPal in Cal.com, no PayPal option appears at checkout. Error: "you can only have one payment type enabled per event type."
+**Root cause**: Cal.com limitation — each event type supports exactly one payment provider (Stripe OR PayPal, not both).
+**Workaround**: Create duplicate event types (one for Stripe, one for PayPal). Decided against this — stick with Stripe only for simplicity.
+
+### 17. PayPal sandbox credentials fail webhook creation
+**Symptom**: Cal.com cannot create PayPal webhook when using sandbox/test credentials.
+**Fix**: Must use live PayPal app credentials, not sandbox. User switched to live app and webhook created successfully.
+
 ## TODO / Remaining Work
 
 ### Done
@@ -273,6 +346,20 @@ DPA signed, integration tested end-to-end, active for EU market.
 - [x] ~~Re-enable webhook signature verification~~ — Fixed: strip `sha256=` prefix, length guard, secret set in both Vercel + Cal.com
 - [x] ~~Await OpenAPI response on data residency~~ — DPA signed, EU processing confirmed
 - [x] ~~Update privacy-agreement-en.pdf~~ — Regenerated combined PDFs, removed old provider references
+- [x] ~~Switch from popup to inline Cal.com embed~~ — Inline embed with side-by-side layout at 900px max-width
+- [x] ~~Remove psychoanalysis service claims~~ — Updated to "Psychotherapy (n. d. HeilprG)" across all pages
+- [x] ~~Switch from RED Medical to Cal Video~~ — Updated FAQ, datenschutz.html, HTML comments
+- [x] ~~Build automated Zahlungsbestätigung (payment receipt)~~ — generate-receipt.js + sendReceiptEmail() in webhook-booking.js
+- [x] ~~Build monthly Rechnung generator~~ — tools/generate-rechnung.py with sessions.json input
+- [x] ~~Switch from Mailjet to all-inkl SMTP~~ — nodemailer with SMTP_* env vars (Mailjet blocked by compliance)
+- [x] ~~Add phone number to Impressum~~ — +49 157 5469 5230
+- [x] ~~Add Steuernummer to invoices/receipts~~ — 921/310/68453
+- [x] ~~Create favicon and OG image~~ — favicon.svg + og-image.png
+- [x] ~~Fix CHF → EUR on site~~ — All currency references now EUR
+- [x] ~~Fix "free consultation" references~~ — Removed, €150 first session positioned as entry point
+- [x] ~~Fix session duration mismatch~~ — Aligned to 45 min
+- [x] ~~Add PayPal to datenschutz.html~~ — Added PayPal (Europe) S.à r.l. disclosure
+- [x] ~~Evaluate PayPal for Cal.com~~ — Blocked by one-payment-type-per-event limitation, staying with Stripe
 
 ### Domain Migration: `robertrozek.de` → Vercel + Registrar Transfer
 
@@ -550,56 +637,71 @@ Only do this after Phase 1 has been stable for several days. Recommended: **Clou
 | Cloudflare proxy breaks Vercel | You left the orange cloud (Proxied) on. Switch to grey cloud (DNS only) for both A and CNAME records. |
 | Transfer stuck / rejected by DENIC | Transfer lock (Domainsperre) is still on at all-inkl, or you clicked "keep domain" in a confirmation email by mistake. Go to KAS → confirm Domainsperre is disabled. If all-inkl sent a retention email, contact their support to release it. |
 
-### Signing Email Delivery (Mailjet)
+### Signing Email Delivery (all-inkl SMTP)
 
-OpenAPI EU-SES does **NOT** send signing invitation emails. It returns a signing URL in the API response, and you must deliver that URL to the client yourself. The webhook currently logs the URL; Mailjet sends it.
+OpenAPI EU-SES does **NOT** send signing invitation emails. It returns a signing URL in the API response, and we deliver that URL to the client via all-inkl SMTP (nodemailer).
 
-**Setup steps:**
+**Status:** ✅ Implemented. `sendSigningEmail()` in webhook-booking.js sends branded HTML email with signing link button.
 
-- [ ] **Sign Mailjet DPA**: https://www.mailjet.com/legal/dpa/ → sign from Mailjet dashboard (Account → DSGVO/GDPR)
-- [ ] **Add `robertrozek.de` as sending domain in Mailjet**:
-  - Mailjet dashboard → Domains & Absender → Domains → Add domain → `robertrozek.de`
-  - Mailjet will give you **SPF** and **DKIM** TXT records to add at all-inkl KAS
-  - Go to KAS → DNS settings for `robertrozek.de` → add the TXT records Mailjet requires
-  - Back in Mailjet → click Validate/Authenticate → confirm domain is verified
-- [ ] **Add Vercel env vars**:
-  - `MAILJET_API_KEY` = `3876d6d98a328f2be993e66430f30122`
-  - `MAILJET_SECRET_KEY` = (your secret key)
-  - `MAILJET_FROM_EMAIL` = `praxis@robertrozek.de` (or any `@robertrozek.de` address)
-  - `MAILJET_FROM_NAME` = `Praxis Robert Rozek`
-- [ ] **Redeploy** Vercel after adding env vars
-- [ ] **Test**: make a booking → check Vercel logs for `[Webhook] Signing email sent` → check client inbox for the signing link email
+**Previous approach (abandoned):** Mailjet was originally planned for transactional email. Blocked because Mailjet's compliance team refused to allow sending from `praxis@robertrozek.de` (domain not matching Mailjet account). Switched to direct SMTP via all-inkl's mail server, which already hosts the `@robertrozek.de` mailbox.
+
+**SMTP env vars required:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_NAME`
 
 **If/when you switch from all-inkl to Cloudflare (Phase 2):**
-- Cloudflare's DNS will need the same Mailjet SPF/DKIM TXT records re-added
-- Mailjet continues working — it sends via its own servers, not all-inkl's
-- Drop all-inkl DPA, keep Mailjet DPA + add Cloudflare DPA
+- all-inkl email dies with the domain transfer — must set up Cloudflare Email Routing first
+- For transactional SMTP, either use a dedicated service (Postmark, SendGrid) or route through the new mailbox provider
+- Update SMTP_* env vars accordingly
 
 ### DPA (Auftragsverarbeitungsvertrag) Checklist
 
-| Provider | What it processes | DPA status | Where to sign |
-|---|---|---|---|
-| **OpenAPI** | Client email, name, signed documents | ✅ Signed | console.openapi.com |
-| **Mailjet** | Client email (sending signing URL) | ⬜ Needs signing | mailjet.com → Account → GDPR |
-| **all-inkl** | Email relay, DNS hosting | ⬜ Check KAS | KAS → Verträge or support request |
-| **Cal.com** | Client name, email, booking data | ⬜ Check account | cal.com → Settings → Legal |
-| **Stripe** | Payment data (via Cal.com) | ✅ Auto-accepted on signup | stripe.com/legal |
-| **Vercel** | Serverless function logs (IP, request data) | ⬜ Check account | vercel.com → Legal |
-| **Google Analytics** | IP, pageviews, device data | ⬜ Check GA4 admin | analytics.google.com → Admin |
-| **Microsoft Clarity** | Session recordings, heatmaps | ⬜ Check account | clarity.microsoft.com |
-| **Cloudflare** (future) | DNS, email routing | N/A yet | dash.cloudflare.com |
+All signed DPAs are stored in `/dpa/` folder in the repo.
 
-### Other
+| Provider | What it processes | DPA status | File |
+|---|---|---|---|
+| **OpenAPI** | Client email, name, signed documents | ✅ Signed | `dpa/OPENAPI signedDocument.pdf` + `OPENAPI-Data processor agreement.pdf` |
+| **all-inkl** | SMTP email relay (signing URLs, receipts), DNS hosting | ✅ Signed | `dpa/ALL-INKL-Auftragsverarbeitungsvertrag_733424_20220919.pdf` |
+| **Stripe** | Payment data (via Cal.com) | ✅ Signed | `dpa/STRIPE-DPA_2025-Nov-18_.pdf` |
+| **Vercel** | Serverless function logs (IP, request data) | ✅ Signed | `dpa/VERCEL-Data Processing Agreement.pdf` |
+| **Google (GA4 + Ads)** | IP, pageviews, device data | ✅ Signed | `dpa/GA4-Google Ads Data Processing Terms.pdf` |
+| **Microsoft Clarity** | Session recordings, heatmaps | ✅ Signed | `dpa/CLARITY-MicrosoftProductandServicesDPA(WW)(German)(September2025)(CR).docx` |
+| **Cal.com** | Client name, email, booking data | ⏳ **Pending countersignature** | Requested 2026-03-04 + 2026-03-05 via Cal.com dashboard. Awaiting Bailey Pumfleet (Cal.com). Once signed → save as `dpa/CALCOM-DPA.pdf` |
+| **PayPal** (disclosed in datenschutz but not currently used) | N/A | N/A | — |
+| **Cloudflare** (future) | DNS, email routing | N/A yet | — |
+
+### Immediate
+
+- [ ] **Enable Stripe customer emails** — Stripe Dashboard → Settings → Customer emails → toggle "Successful payments" and "Refunds" ON. This gives clients an additional Stripe receipt alongside the custom Zahlungsbestätigung.
+- [ ] **End-to-end test: booking → receipt email** — Make a test booking, verify Zahlungsbestätigung PDF arrives at client email with correct GebüH code and amount.
+- [ ] **End-to-end test: cancellation → email** — Make a test booking, cancel it, verify cancellation email fires correctly.
+- [ ] **Cal.com DPA** — requested 2026-03-04 + 2026-03-05, pending countersignature from Bailey Pumfleet. Once signed → download and save to `dpa/CALCOM-DPA.pdf`.
+- [ ] **Request Google re-crawl** — Google Search Console → URL Inspection → request indexing for `https://robertrozek.de/` (old "Psychoanalytic Practice" text still cached).
+- [ ] **Set up Google Ads campaign** — €400 spend → €400 bonus credits promotion. Uncomment `AW-XXXXXXXXX` tracking in index.html. Target: "Psychotherapie München online", "Heilpraktiker Psychotherapie online".
+- [x] ~~**Email deliverability**~~ — SPF, DKIM (2 keys), and DMARC already configured in all-inkl DNS. Optional cleanup: remove stale `include:spf.mailjet.com` from SPF record and delete `mailjet._domainkey` DKIM record.
+
+### Soon
 
 - [ ] **Renew OpenAPI API tokens** — Production token expires 2027. Check console.openapi.com periodically.
-- [x] ~~Switch OpenAPI from sandbox to production~~ — Done: `OPENAPI_SANDBOX` removed, production token set, credits topped up (€50)
+- [ ] **German translation** — User wants switchable DE/EN version of the site (currently English with German legal pages).
+- [ ] **Cookie banner language** — Currently English, should be bilingual DE/EN for DACH market.
+- [ ] **Self-host Google Fonts** — Eliminates DSGVO risk from LG München I ruling (see SITE-AUDIT.md #9).
+- [ ] **Security headers** — Add CSP, HSTS, Permissions-Policy to vercel.json (see SITE-AUDIT.md #14).
+- [ ] **Accessibility** — Add `aria-label` / `aria-hidden` to SVG icons (see SITE-AUDIT.md #18).
+- [ ] **Schema markup (JSON-LD)** — Add LocalBusiness + MedicalBusiness structured data for rich search snippets.
+- [ ] **sitemap.xml + robots.txt** — Auto-generate and submit to Google Search Console.
+- [ ] **Server-side conversion tracking (CAPI)** — Client-side ad blocking rates are high; consider Google Ads server-side conversion API via Vercel function.
+
+### Future
+
+- [x] ~~Switch OpenAPI from sandbox to production~~ — Done
 - [x] ~~Set Cal.com price back to €150~~ — Done
-- [x] ~~Remove debug logging~~ — Done: `[Callback raw]` line removed from esign-callback.js
+- [x] ~~Remove debug logging~~ — Done
 - [ ] Build out coaching.html for US market
 - [ ] Create separate Cal.com event type for US coaching (USD pricing)
-- [ ] Set up Doxy.me for US video sessions (or confirm RED Medical for all)
 - [ ] Uncomment Google Ads tracking when campaign is created
 - [ ] Rotate DocuSign RSA keypair if DocuSign is ever activated (private key was shared in chat during setup)
+- [ ] Consider Uptime monitoring (e.g., BetterStack free tier) for webhook endpoints
+- [ ] Consider error tracking (Sentry free tier) for serverless functions
+- [ ] `isFirstSession` detection — currently hardcoded to `false` in receipt generation. TODO: detect first booking per client email to use GebüH 19.1 vs 19.2 automatically.
 
 ## Decision Log
 
@@ -641,19 +743,51 @@ OpenAPI EU-SES does **NOT** send signing invitation emails. It returns a signing
 
 **Setup**: Cal.com → Apps → App Store → Stripe (NOT Settings → Payments, which doesn't exist). Then enable "Require payment" on the event type.
 
-### 2026-02-28 — Stack: Cal.com + Stripe + RED Medical
+### 2026-03-05 — Psychotherapy Rebranding: Remove Psychoanalysis Claims
 
-**Decision**: Consolidate to a single booking flow — Cal.com embedded on the landing page, Stripe for prepayment, RED Medical for video sessions.
+**Decision**: Remove all service-level "psychoanalysis" / "psychoanalytic practice" claims from the site. Replace with "Psychotherapy (n. d. HeilprG)". Keep academic references to "psychoanalytic theory" in the Research section.
 
-**Reasoning**: Cal.com embeds as inline modal (lowest friction), native Stripe integration, single page to maintain. Removed It's Complicated, Doctolib variants.
+**Reasoning**: In Germany, advertising as a "Psychoanalyst" without being one (via Approbation + psychoanalytic Weiterbildung) is illegal under HWG and UWG. As a Heilpraktiker für Psychotherapie, the correct designation is "Psychotherapie nach dem Heilpraktikergesetz." Academic references to theory are permissible.
+
+**Files changed**: index.html (title, meta, OG, hero, about, approach, CTA, footer), variant-doctolib.html, variant-redmedical.html, datenschutz.html, impressum.html.
+
+### 2026-03-05 — Cal Video Instead of RED Medical
+
+**Decision**: Switch from RED Medical to Cal Video for video sessions.
+
+**Reasoning**: RED Medical is a KBV-certified platform designed for approbierte Psychotherapeuten in the Telematikinfrastruktur. As a Heilpraktiker (not approbation-based), KBV certification is unnecessary. Only DSGVO-compliant encrypted video is required. Cal Video (via Cal.com) meets this — encrypted, no recording, no third-party access — and is already integrated into the booking flow with zero additional cost.
+
+### 2026-03-05 — Inline Cal.com Embed Instead of Popup Modal
+
+**Decision**: Replace Cal.com popup modal with inline embed on the main page (`#book` section). All booking buttons scroll to this section.
+
+**Reasoning**: The popup modal runs inside a cross-origin iframe, making it impossible to control close-on-outside-click behavior from the parent page. Inline embed eliminates this UX issue entirely and provides a more integrated feel. Width set to 900px max for side-by-side calendar + time slots layout.
+
+### 2026-03-05 — Two-Tier Receipt/Invoice System
+
+**Decision**: Automated lightweight Zahlungsbestätigung per booking + manual monthly Rechnung for PKV insurance submission.
+
+**Reasoning**: DSGVO Art. 9 data minimization — diagnosis (ICD-10), DOB, and client address are special category health data that should NOT flow through automated webhooks. The automated receipt contains only: practice details, client name/email, session date, GebüH code, amount, §4 UStG note. The full Rechnung with sensitive data is generated locally from clinical records via `tools/generate-rechnung.py`.
+
+### 2026-03-05 — Mailjet Abandoned, all-inkl SMTP via Nodemailer
+
+**Decision**: Use all-inkl's existing SMTP server for transactional email instead of Mailjet.
+
+**Reasoning**: Mailjet's compliance team blocked sending from `praxis@robertrozek.de` because the domain wasn't verified to their satisfaction. all-inkl already hosts the mailbox — direct SMTP works immediately with no additional compliance hurdles. Trade-off: no email analytics dashboard (open rates, etc.), but for transactional emails (signing URLs, receipts) this is acceptable.
+
+### 2026-03-05 — PayPal: Not Worth the Complexity
+
+**Decision**: Stick with Stripe as the sole payment provider. Do not add PayPal.
+
+**Reasoning**: Cal.com only allows one payment provider per event type. Adding PayPal would require duplicate event types (one Stripe, one PayPal), confusing the booking UX. Stripe already covers credit cards and SEPA (with 14-day settlement), which covers the vast majority of German/EU payment preferences. PayPal credentials are configured in the PayPal developer console but not activated in Cal.com.
+
+### 2026-02-28 — Stack: Cal.com + Stripe + Cal Video
+
+**Decision**: Consolidate to a single booking flow — Cal.com embedded inline on the landing page, Stripe for prepayment, Cal Video for sessions.
+
+**Reasoning**: Cal.com handles scheduling + payment + video in one platform. Native Stripe integration, single page to maintain. Removed It's Complicated, Doctolib variants.
 
 **Trade-off**: Lost It's Complicated directory listing for organic discovery. Mitigated by Google Ads.
-
-### 2026-02-28 — RED Medical: Internationally Legal
-
-**Decision**: Use RED Medical (RED connect plus) for all video sessions including international.
-
-**Reasoning**: Works worldwide, no IP restrictions. E2E encrypted peer-to-peer. KBV-certified. As Heilpraktiker (not GKV-billed), no billing constraints on international use.
 
 ### 2026-02-28 — BetterHelp Ratings: Do Not Display
 

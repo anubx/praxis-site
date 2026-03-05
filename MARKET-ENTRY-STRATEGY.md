@@ -1,4 +1,4 @@
-# Market Entry Strategy — Psychoanalytic Practice
+# Market Entry Strategy — Psychotherapy Practice (n. d. HeilprG)
 
 **Robert Rozek, MSc, MA — Heilpraktiker für Psychotherapie**  
 **Expansion roadmap: Germany → DACH → UK → USA**  
@@ -15,7 +15,7 @@ This document outlines the phased expansion of a Munich-based online psychoanaly
 ## Phase 1: Germany (Current — Stabilize & Optimize)
 
 ### Status
-Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical). Landing page deployed on Vercel.
+Live. Booking flow functional (Cal.com inline embed → Stripe → OpenAPI EU-SES e-sign → Cal Video). Landing page deployed on Vercel at `robertrozek.de`. Automated payment receipt (Zahlungsbestätigung) PDF sent per booking. Monthly Rechnung generator available locally.
 
 ### Legal Framework
 - **License:** Heilpraktiker für Psychotherapie (HeilPrG § 1)
@@ -25,17 +25,19 @@ Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical).
 - **Data protection:** DSGVO (full compliance required, Art. 9 health data).
 - **Insurance reimbursement:** Private insurance (PKV) and Zusatzversicherungen may reimburse via GebüH invoices. No GKV (public insurance) billing.
 
-### Immediate Actions
-1. Fix site audit issues (see SITE-AUDIT.md) — especially CHF→EUR, free consultation flow, privacy policy gaps
-2. Decide on free consultation: create a separate free 15–30 min Cal.com event type (recommended)
-3. Set Cal.com price back to €150 (currently at test value)
-4. Re-enable webhook signature verification
-5. Remove debug logging from serverless functions
-6. Self-host Google Fonts (DSGVO compliance, performance)
-7. Add phone number to Impressum
-8. Create favicon and OG image for social sharing
-9. Set up Google Ads campaign (tracking IDs already in place, just commented out)
-10. Switch DocuSign from sandbox to production (EU endpoint)
+### Immediate Actions (Updated 2026-03-05)
+1. ~~Fix CHF→EUR~~ ✅
+2. ~~Remove "free consultation" references~~ ✅ (€150 first session as entry point)
+3. ~~Set Cal.com price back to €150~~ ✅
+4. ~~Re-enable webhook signature verification~~ ✅
+5. ~~Remove debug logging~~ ✅
+6. Self-host Google Fonts (DSGVO compliance, performance) — **REMAINING**
+7. ~~Add phone number to Impressum~~ ✅
+8. ~~Create favicon and OG image~~ ✅
+9. Set up Google Ads campaign — **NEXT PRIORITY** (€400 spend → €400 bonus credits)
+10. ~~Switch from DocuSign to OpenAPI EU-SES~~ ✅ (OpenAPI is active, DocuSign feature-flagged)
+11. Sign outstanding DPAs (all-inkl, Cal.com, Vercel, GA4, Clarity) — **REMAINING**
+12. End-to-end test full booking + receipt + cancellation flow — **REMAINING**
 
 ### Marketing Channels
 - **Google Ads:** Target keywords like "Psychotherapie München online", "Psychoanalytiker München", "Heilpraktiker Psychotherapie online"
@@ -63,7 +65,7 @@ Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical).
 - Similar cultural understanding of psychoanalysis
 - Existing legal and regulatory similarities
 - Can serve from Munich without relocating
-- RED Medical works internationally (no IP restrictions, KBV-certified but usable worldwide)
+- Cal Video works internationally (encrypted, DSGVO-compliant, integrated into Cal.com)
 
 ### Austria
 
@@ -237,7 +239,7 @@ Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical).
 
 | Market | Brand Framing | Title Used |
 |--------|--------------|------------|
-| Germany | Psychoanalytische Praxis / Psychotherapie | Heilpraktiker für Psychotherapie |
+| Germany | Praxis für Psychotherapie (n. d. HeilprG) | Heilpraktiker für Psychotherapie |
 | Austria | Psychoanalytische Beratung | Psychologe (MSc), Berater |
 | Switzerland | Psychoanalytische Beratung | Psychologe (MSc), Berater |
 | UK | Psychoanalytic Counselling / Psychotherapy | Psychoanalytic Psychotherapist |
@@ -257,11 +259,11 @@ Live. Booking flow functional (Cal.com → Stripe → DocuSign → RED Medical).
 
 | Component | Phase 1 (DE) | Phase 2 (DACH) | Phase 3 (UK) | Phase 4 (US) |
 |-----------|-------------|----------------|-------------|-------------|
-| **Landing page** | index.html (fix issues) | Add AT/CH disclaimers | UK variant or shared English page | coaching.html build-out |
-| **Cal.com** | Fix price, add free consult | Add CHF event type | Add GBP event type | Add USD coaching event type |
+| **Landing page** | index.html (inline embed, mostly done) | Add AT/CH disclaimers | UK variant or shared English page | coaching.html build-out |
+| **Cal.com** | ✅ €150, inline embed | Add CHF event type | Add GBP event type | Add USD coaching event type |
 | **Stripe** | EUR (current) | + CHF | + GBP | + USD |
-| **E-sign provider** | DocuSign EU or OpenAPI | Same | DocuSign (shared) | DocuSign US endpoint |
-| **Video** | RED Medical | RED Medical | RED Medical or Zoom | RED Medical or Zoom |
+| **E-sign provider** | OpenAPI EU-SES (active) | Same | DocuSign (shared) | DocuSign US endpoint |
+| **Video** | Cal Video | Cal Video | Cal Video or Zoom | Cal Video or Zoom |
 | **Privacy policy** | Fix gaps (see audit) | Minor additions | UK GDPR variant | US privacy + CCPA notice |
 | **Legal pages** | Fix Impressum | Add AT/CH disclaimers | UK terms of service | US coaching disclaimer + terms |
 | **Cookie banner** | Fix language | Same | Adapt for UK (ICO guidance) | Simpler (no GDPR, but CCPA) |
