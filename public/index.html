@@ -52,31 +52,6 @@
   });
 </script>
 
-<!-- ============ PREVENT CAL.COM MODAL CLOSE ON OUTSIDE CLICK ============ -->
-<style>
-  /* Cal.com modal: make the backdrop overlay ignore pointer events,
-     but keep the iframe and close button interactive */
-  div[data-cal-embed-id] {
-    pointer-events: none !important;
-  }
-  div[data-cal-embed-id] > div,
-  div[data-cal-embed-id] iframe,
-  div[data-cal-embed-id] button {
-    pointer-events: auto !important;
-  }
-</style>
-<script>
-  // Fallback: intercept clicks on Cal.com's modal backdrop in capture phase.
-  // Cal.com's overlay is a full-screen div behind the iframe.
-  document.addEventListener('click', function(e) {
-    var el = e.target;
-    // Check if click is on the Cal.com backdrop (not on iframe or close button)
-    if (el && el.getAttribute && el.getAttribute('data-cal-embed-id')) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, true);
-</script>
 
 <!-- ============ COOKIE CONSENT: blocks all tracking until accepted ============ -->
 <script>
@@ -1159,8 +1134,7 @@
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#research">Research</a></li>
     <li>
-      <a href="#" class="btn-nav"
-         data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
+      <a href="#book" class="btn-nav"
          onclick="trackBooking('calcom', 'nav_book', 'Nav CTA')">
         Book <span class="arrow">&rarr;</span>
       </a>
@@ -1176,8 +1150,7 @@
     Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and rigorous clinical practice. Secure video sessions from Munich.
   </p>
   <div class="hero-actions">
-    <a href="#" class="btn-primary"
-       data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
+    <a href="#book" class="btn-primary"
        onclick="trackBooking('calcom', 'hero_book', 'Hero CTA')">
       Book a consultation <span class="arrow">&rarr;</span>
     </a>
@@ -1307,8 +1280,7 @@
           <li><span class="check">&check;</span> Invoice for insurance reimbursement (GebüH)</li>
         </ul>
 
-        <a href="#" class="btn-primary" style="width: 100%; justify-content: center;"
-           data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
+        <a href="#book" class="btn-primary" style="width: 100%; justify-content: center;"
            onclick="trackBooking('calcom', 'pricing_book', 'Pricing CTA')">
           Book a session <span class="arrow">&rarr;</span>
         </a>
@@ -1376,16 +1348,26 @@
   </div>
 </section>
 
-<!-- ============ CTA ============ -->
-<section class="cta-section reveal">
+<!-- ============ BOOKING / CTA ============ -->
+<section id="book" class="cta-section reveal">
   <h2>Ready to begin?</h2>
   <p>Book a first session. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment to continue.</p>
-  <a href="#" class="btn-primary"
-     data-cal-link="rozek.therapy/session" data-cal-config='{"layout":"month_view"}'
-     onclick="trackBooking('calcom', 'cta_book', 'Bottom CTA')">
-    Schedule a session <span class="arrow">&rarr;</span>
-  </a>
-  <div class="cta-badge">
+  <div id="cal-inline-embed" style="width:100%; min-height:500px; margin-top:2rem;"></div>
+  <script>
+    // Wait for Cal to load, then render inline embed
+    (function waitForCal() {
+      if (window.Cal) {
+        Cal("inline", {
+          elementOrSelector: "#cal-inline-embed",
+          calLink: "rozek.therapy/session",
+          layout: "month_view"
+        });
+      } else {
+        setTimeout(waitForCal, 100);
+      }
+    })();
+  </script>
+  <div class="cta-badge" style="margin-top:1.5rem;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     Secure &middot; Confidential &middot; GDPR compliant
   </div>
