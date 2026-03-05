@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Returning Client — Robert Rozek</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<!-- CAL.COM EMBED -->
+<script>
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; typeof namespace === "string" ? (cal.ns[namespace] = api) && p(api, ar) : p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", {origin:"https://app.cal.com"});
+  Cal("ui", {
+    theme: "light",
+    styles: { branding: { brandColor: "#1c1917" } },
+    hideEventTypeDetails: false
+  });
+</script>
+
+<!-- Self-hosted fonts (DSGVO-compliant) -->
+<style>
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/InstrumentSerif-Regular-Latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+  }
+</style>
+<style>
+  :root {
+    --stone-50: #fafaf9;
+    --stone-100: #f5f5f4;
+    --stone-200: #e7e5e4;
+    --stone-300: #d6d3d1;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+    --stone-700: #44403c;
+    --stone-800: #292524;
+    --stone-900: #1c1917;
+    --warm: #b8976a;
+    --warm-light: #e8ddd0;
+    --warm-muted: #d4c4ae;
+    --accent: #8b7355;
+    --accent-dark: #6b583f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--stone-50);
+    color: var(--stone-800);
+    font-weight: 300;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--stone-500);
+    text-decoration: none;
+    margin-bottom: 3rem;
+    transition: color 0.3s;
+  }
+
+  .back:hover { color: var(--stone-900); }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--warm-light);
+    padding: 0.35rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--stone-900);
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .intro {
+    font-size: 0.95rem;
+    color: var(--stone-500);
+    line-height: 1.85;
+    margin-bottom: 3rem;
+    max-width: 540px;
+  }
+
+  /* Pricing card */
+  .pricing-card {
+    padding: 2.5rem;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid var(--stone-200);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--warm), var(--accent), transparent);
+  }
+
+  .pricing-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .pricing-currency {
+    font-size: 1.2rem;
+    color: var(--stone-400);
+    font-weight: 400;
+  }
+
+  .pricing-number {
+    font-family: 'Instrument Serif', serif;
+    font-size: 4.5rem;
+    color: var(--stone-900);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .pricing-per {
+    font-size: 0.85rem;
+    color: var(--stone-400);
+  }
+
+  .pricing-note {
+    font-size: 0.85rem;
+    color: var(--stone-500);
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .pricing-includes {
+    list-style: none;
+    margin-bottom: 0;
+  }
+
+  .pricing-includes li {
+    padding: 0.6rem 0;
+    font-size: 0.88rem;
+    color: var(--stone-600);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--stone-100);
+  }
+
+  .pricing-includes li:last-child { border: none; }
+
+  .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--warm-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  /* Booking embed */
+  .booking-section {
+    margin-bottom: 3rem;
+  }
+
+  .booking-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--stone-900);
+    margin-bottom: 0.75rem;
+  }
+
+  .booking-section p {
+    font-size: 0.88rem;
+    color: var(--stone-500);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .cta-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--stone-400);
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+  }
+
+  .cta-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Footer */
+  .footer-minimal {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--stone-200);
+    font-size: 0.78rem;
+    color: var(--stone-400);
+    line-height: 1.8;
+  }
+
+  .footer-minimal a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer-minimal a:hover {
+    color: var(--stone-800);
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 4rem 1.5rem 3rem; }
+    h1 { font-size: 2rem; }
+    .pricing-number { font-size: 3.5rem; }
+    .pricing-card { padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <a href="/" class="back">&larr; Back to site</a>
+
+  <div class="badge">Returning client</div>
+  <h1>Welcome back</h1>
+  <p class="intro">
+    This page is for existing clients with an ongoing arrangement. Use the booking calendar below to schedule your next session at your agreed rate.
+  </p>
+
+  <div class="pricing-card">
+    <div class="pricing-amount">
+      <span class="pricing-currency">&euro;</span>
+      <span class="pricing-number">70</span>
+    </div>
+    <div class="pricing-per">per session &middot; 45 minutes</div>
+    <p class="pricing-note">Returning client rate — as agreed individually.</p>
+
+    <ul class="pricing-includes">
+      <li><span class="check">&check;</span> Secure video session via encrypted platform</li>
+      <li><span class="check">&check;</span> Flexible scheduling — daytime & evening</li>
+      <li><span class="check">&check;</span> Invoice provided for insurance claims (GebüH)</li>
+      <li><span class="check">&check;</span> 24-hour free cancellation</li>
+    </ul>
+  </div>
+
+  <div class="booking-section">
+    <h2>Book your next session</h2>
+    <p>Select a time that works for you. You'll receive a confirmation email with the video link.</p>
+
+    <!--
+      ╔═══════════════════════════════════════════════════════════════╗
+      ║  TODO: Create a separate Cal.com event type for returning    ║
+      ║  clients at €50 (e.g., "rozek.therapy/returning") with a    ║
+      ║  corresponding Stripe price. Then replace the calLink below. ║
+      ╚═══════════════════════════════════════════════════════════════╝
+    -->
+    <div id="cal-inline-embed"></div>
+    <script>
+      (function waitForCal() {
+        if (window.Cal) {
+          Cal("inline", {
+            elementOrSelector: "#cal-inline-embed",
+            calLink: "rozek.therapy/returning",
+            layout: "month_view",
+            config: { hideEventTypeDetails: "true" }
+          });
+        } else {
+          setTimeout(waitForCal, 100);
+        }
+      })();
+    </script>
+
+    <div class="cta-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Secure &middot; Confidential &middot; GDPR compliant
+    </div>
+  </div>
+
+  <div class="footer-minimal">
+    &copy; 2026 Robert Rozek &middot; <a href="/datenschutz.html">Datenschutz</a> &middot; <a href="/impressum.html">Impressum</a>
+  </div>
+</div>
+</body>
+</html>
