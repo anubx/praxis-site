@@ -171,15 +171,27 @@ Declined. Sends hashed client emails to Google for ad matching. For a therapy pr
 - [x] **Manually paused campaign** — Status set to Paused from dashboard (2026-03-05)
 - [x] **Added 15 negative keywords** at campaign level (broad match): Ausbildung, Prüfung, Studium, kostenlos, gratis, Krankenkasse, Kassenzulassung, Stellenangebote, Jobs, Gehalt, Praktikum, Fernstudium, Therapeut werden, Heilpraktiker werden, Prüfungsfragen
 - [x] **GA4 linked to Google Ads** — Property "private-practice" (526213594) was already linked (since Feb 27, 2026). App and web metrics: On. Google Analytics audiences import: Off (DSGVO — no remarketing for health data).
+- [x] **Google Search Console** — Property verified, sitemap.xml submitted, re-indexing requested (2026-03-05)
+- [x] **SEO deployed** — sitemap.xml, robots.txt, JSON-LD schema markup (EN + DE) all live
+
+## SEO Files Deployed (2026-03-05)
+
+- `public/sitemap.xml` — 6 pages (3 EN + 3 DE), hreflang cross-references, excludes /returning and /archive
+- `public/robots.txt` — blocks /returning.html, /de/returning.html, /archive/, /coaching.html
+- JSON-LD on `public/index.html` and `public/de/index.html` — MedicalBusiness type, hours 10-16 Mon-Fri, €150/session
+
+## Decisions: Google Business Profile — Declined
+
+Decided NOT to create a Google Business Profile. Reason: therapy practice by nature involves confrontational work with difficult personalities. Negative reviews are a structural risk that outweighs the SEO benefit of map pack visibility.
 
 ## Before Launching (Remaining Checklist)
 
+- [ ] Apply promo code (€400 bonus — Billing → Promotions. Must apply within 14 days of account creation on 2026-03-05, so **deadline ~2026-03-19**)
 - [ ] Set up conversion tracking (get AW-ID from conversion action, update index.html code, push) — optional, GA4 page view tracking works as fallback
 - [ ] Remove end date (currently March 31 — should be open-ended)
-- [ ] Apply promo code (€400 bonus — must apply within 14 days of account creation)
 - [ ] Change start date to actual launch date
 - [ ] Enable campaign
 
 ---
 
-*Log created 2026-03-05. Last updated 2026-03-05 (negative keywords, pause, GA4 link confirmed).*
+*Log created 2026-03-05. Last updated 2026-03-05 (SEO deployed, GSC submitted, GBP declined).*
