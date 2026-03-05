@@ -8,10 +8,19 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://robertrozek.de/">
 
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
 <!-- Open Graph -->
 <meta property="og:title" content="Robert Rozek — Psychoanalytic Practice">
 <meta property="og:description" content="Online psychoanalytic counseling grounded in continental philosophy, Lacanian theory, and clinical practice.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://robertrozek.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://robertrozek.de/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://robertrozek.de/og-image.png">
 
 <!--
   ╔══════════════════════════════════════════════════════════════╗
@@ -41,6 +50,32 @@
     styles: { branding: { brandColor: "#1c1917" } },
     hideEventTypeDetails: false
   });
+</script>
+
+<!-- ============ PREVENT CAL.COM MODAL CLOSE ON OUTSIDE CLICK ============ -->
+<style>
+  /* Cal.com modal: make the backdrop overlay ignore pointer events,
+     but keep the iframe and close button interactive */
+  div[data-cal-embed-id] {
+    pointer-events: none !important;
+  }
+  div[data-cal-embed-id] > div,
+  div[data-cal-embed-id] iframe,
+  div[data-cal-embed-id] button {
+    pointer-events: auto !important;
+  }
+</style>
+<script>
+  // Fallback: intercept clicks on Cal.com's modal backdrop in capture phase.
+  // Cal.com's overlay is a full-screen div behind the iframe.
+  document.addEventListener('click', function(e) {
+    var el = e.target;
+    // Check if click is on the Cal.com backdrop (not on iframe or close button)
+    if (el && el.getAttribute && el.getAttribute('data-cal-embed-id')) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }, true);
 </script>
 
 <!-- ============ COOKIE CONSENT: blocks all tracking until accepted ============ -->
@@ -132,8 +167,89 @@
   }
 </script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<!-- Self-hosted fonts (DSGVO-compliant — no Google Fonts CDN) -->
+<style>
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/InstrumentSerif-Regular-Latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/InstrumentSerif-Regular-LatinExt.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/InstrumentSerif-Italic-Latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/InstrumentSerif-Italic-LatinExt.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/fonts/DMSans-LatinExt.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/DMSans-LatinExt.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/DMSans-Latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/DMSans-LatinExt.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+</style>
 <style>
   :root {
     --stone-50: #fafaf9;
@@ -1118,7 +1234,7 @@
           Before entering clinical work, my academic research focused on determinate negation, psychotic structure, and the relationship between crisis and subjectivity. This theoretical grounding informs how I listen: not for symptoms to manage, but for the logic — often unconscious — that organizes a person's way of being in the world.
         </p>
         <p>
-          I work with individuals navigating existential impasses, relational difficulties, questions of identity and meaning, professional burnout, and the aftereffects of experiences that resist easy categorization. I also offer supervision for clinicians and graduate students seeking a psychoanalytic frame for their case work.
+          I work with individuals navigating existential impasses, relational difficulties, questions of identity and meaning, professional burnout, and the aftereffects of experiences that resist easy categorization.
         </p>
         <p>
           I believe that genuine change comes not from learning new coping strategies, but from a sustained encounter with what you already know but cannot yet say. My role is to provide the conditions — the regularity, the attention, the theoretical precision — for that encounter to take place.
@@ -1181,13 +1297,13 @@
           <span class="pricing-currency">&euro;</span>
           <span class="pricing-number">150</span>
         </div>
-        <div class="pricing-per">per session &middot; 50 minutes</div>
-        <p class="pricing-note">Applies equally to individual analysis, supervision, and ongoing sessions.</p>
+        <div class="pricing-per">per session &middot; 45 minutes</div>
+        <p class="pricing-note">Applies equally to initial and ongoing sessions.</p>
 
         <ul class="pricing-includes">
           <li><span class="check">&check;</span> Secure video session via encrypted platform</li>
           <li><span class="check">&check;</span> Flexible scheduling — daytime & evening</li>
-          <li><span class="check">&check;</span> No lock-in — cancel or pause anytime</li>
+          <li><span class="check">&check;</span> Free cancellation up to 24 hours before your session</li>
           <li><span class="check">&check;</span> Invoice for insurance reimbursement (GebüH)</li>
         </ul>
 
@@ -1222,9 +1338,10 @@
         </div>
 
         <div class="pricing-faq">
-          <h4>Do you offer supervision?</h4>
-          <p>Yes — for clinicians and graduate students. Same rate, 60-minute sessions. Case discussion grounded in psychoanalytic theory.</p>
+          <h4>What is the cancellation policy?</h4>
+          <p>You may cancel or reschedule free of charge up to 24 hours before your session. Cancellations made less than 24 hours in advance are non-refundable. You'll receive a cancellation link in your booking confirmation email.</p>
         </div>
+
       </div>
     </div>
   </div>
