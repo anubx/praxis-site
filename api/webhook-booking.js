@@ -24,24 +24,27 @@
  */
 
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const { sendForSignature } = require('./esign-provider');
 
-// ─── Mailjet Email Sending ──────────────────────────────────
+// ─── SMTP Email Sending (all-inkl) ─────────────────────────
 
 /**
- * Send signing URL to client via Mailjet API.
+ * Send signing URL to client via SMTP (all-inkl / nodemailer).
  * OpenAPI EU-SES does NOT send invitation emails — we must deliver the signing link ourselves.
  *
- * ENV vars: MAILJET_API_KEY, MAILJET_SECRET_KEY, MAILJET_FROM_EMAIL, MAILJET_FROM_NAME
+ * ENV vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+ * Optional: SMTP_FROM_NAME (defaults to "Praxis Robert Rozek")
  */
 async function sendSigningEmail({ email, name, signingUrl, lang }) {
-  const apiKey = process.env.MAILJET_API_KEY;
-  const secretKey = process.env.MAILJET_SECRET_KEY;
-  const fromEmail = process.env.MAILJET_FROM_EMAIL || 'praxis@robertrozek.de';
-  const fromName = process.env.MAILJET_FROM_NAME || 'Praxis Robert Rozek';
+  const host = process.env.SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const fromName = process.env.SMTP_FROM_NAME || 'Praxis Robert Rozek';
 
-  if (!apiKey || !secretKey) {
-    console.warn('[Mailjet] API keys not configured — skipping signing email');
+  if (!host || !user || !pass) {
+    console.warn('[SMTP] Credentials not configured — skipping signing email');
     return false;
   }
 
@@ -82,35 +85,28 @@ async function sendSigningEmail({ email, name, signingUrl, lang }) {
     ? `Liebe/r ${name},\n\nvielen Dank für Ihre Buchung. Bitte unterschreiben Sie die Aufnahmedokumente unter folgendem Link:\n\n${signingUrl}\n\nMit freundlichen Grüßen,\nRobert Rozek\nPraxis Robert Rozek · Augsburgerstraße 6 · 80337 München`
     : `Dear ${name},\n\nThank you for your booking. Please sign the intake documents at the following link:\n\n${signingUrl}\n\nKind regards,\nRobert Rozek\nPraxis Robert Rozek · Augsburgerstraße 6 · 80337 München`;
 
-  const body = {
-    Messages: [
-      {
-        From: { Email: fromEmail, Name: fromName },
-        To: [{ Email: email, Name: name }],
-        Subject: subject,
-        TextPart: textBody,
-        HTMLPart: htmlBody,
-      },
-    ],
-  };
+  try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
 
-  const res = await fetch('https://api.mailjet.com/v3.1/send', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Basic ' + Buffer.from(`${apiKey}:${secretKey}`).toString('base64'),
-    },
-    body: JSON.stringify(body),
-  });
+    await transporter.sendMail({
+      from: `"${fromName}" <${user}>`,
+      to: `"${name}" <${email}>`,
+      subject,
+      text: textBody,
+      html: htmlBody,
+    });
 
-  if (!res.ok) {
-    const err = await res.text();
-    console.error(`[Mailjet] Send failed (${res.status}): ${err}`);
+    console.log(`[SMTP] Signing email sent to ${email}`);
+    return true;
+  } catch (err) {
+    console.error(`[SMTP] Send failed: ${err.message}`);
     return false;
   }
-
-  console.log(`[Mailjet] Signing email sent to ${email}`);
-  return true;
 }
 
 function verifyCalcomSignature(payload, signature, secret) {
@@ -218,7 +214,7 @@ module.exports = async function handler(req, res) {
     console.log(`[Webhook] Signing URL: ${result.signingUrl}`);
     console.log(`[Webhook] Status: ${result.status}`);
 
-    // Send signing URL to client via Mailjet
+    // Send signing URL to client via SMTP (all-inkl)
     if (result.signingUrl) {
       await sendSigningEmail({
         email: attendee.email,
