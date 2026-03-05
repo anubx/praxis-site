@@ -26,6 +26,7 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { sendForSignature } = require('./esign-provider');
+const { generateReceipt } = require('./generate-receipt');
 
 // ─── SMTP Email Sending (all-inkl) ─────────────────────────
 
@@ -109,6 +110,101 @@ async function sendSigningEmail({ email, name, signingUrl, lang }) {
   }
 }
 
+/**
+ * Generate and send Zahlungsbestätigung (payment receipt) PDF to client.
+ * BCC to practice email for record-keeping.
+ */
+async function sendReceiptEmail({ email, name, sessionDate, lang, referenceId }) {
+  const host = process.env.SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const fromName = process.env.SMTP_FROM_NAME || 'Praxis Robert Rozek';
+
+  if (!host || !user || !pass) {
+    console.warn('[SMTP] Credentials not configured — skipping receipt email');
+    return false;
+  }
+
+  try {
+    const priceCents = parseInt(process.env.SESSION_PRICE_CENTS || '15000', 10);
+    const amount = priceCents / 100;
+
+    const pdfBuffer = await generateReceipt({
+      clientName: name,
+      clientEmail: email,
+      sessionDate,
+      amount,
+      referenceId: referenceId || 'STRIPE',
+      lang,
+      isFirstSession: false, // TODO: detect first session if needed
+    });
+
+    const isDE = lang === 'de';
+    const dateStr = new Date(sessionDate).toLocaleDateString(isDE ? 'de-DE' : 'en-GB', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    });
+
+    const subject = isDE
+      ? `Zahlungsbestätigung — Sitzung am ${dateStr}`
+      : `Payment confirmation — session on ${dateStr}`;
+
+    const htmlBody = isDE
+      ? `<div style="font-family: Georgia, serif; color: #1c1917; max-width: 600px;">
+          <p>Liebe/r ${name},</p>
+          <p>vielen Dank für Ihre Zahlung. Anbei erhalten Sie die Zahlungsbestätigung für Ihre Sitzung am <strong>${dateStr}</strong>.</p>
+          <p>Der Betrag von <strong>€${amount.toFixed(2)}</strong> wurde erfolgreich per Kreditkarte verarbeitet.</p>
+          <p>Diese Bestätigung enthält den GebüH-Code für Ihre Unterlagen. Für eine vollständige Rechnung zur Einreichung bei Ihrer Versicherung wenden Sie sich bitte direkt an mich.</p>
+          <p>Mit freundlichen Grüßen,<br>Robert Rozek</p>
+          <hr style="border: none; border-top: 1px solid #e7e5e4; margin: 24px 0;">
+          <p style="font-size: 12px; color: #a8a29e;">Praxis Robert Rozek · Augsburgerstraße 6 · 80337 München<br>
+          <a href="https://robertrozek.de" style="color: #b8976a;">robertrozek.de</a></p>
+        </div>`
+      : `<div style="font-family: Georgia, serif; color: #1c1917; max-width: 600px;">
+          <p>Dear ${name},</p>
+          <p>Thank you for your payment. Please find attached the payment confirmation for your session on <strong>${dateStr}</strong>.</p>
+          <p>The amount of <strong>€${amount.toFixed(2)}</strong> has been successfully processed via credit card.</p>
+          <p>This confirmation includes the GebüH code for your records. For a full invoice for insurance submission, please contact me directly.</p>
+          <p>Kind regards,<br>Robert Rozek</p>
+          <hr style="border: none; border-top: 1px solid #e7e5e4; margin: 24px 0;">
+          <p style="font-size: 12px; color: #a8a29e;">Praxis Robert Rozek · Augsburgerstraße 6 · 80337 München<br>
+          <a href="https://robertrozek.de" style="color: #b8976a;">robertrozek.de</a></p>
+        </div>`;
+
+    const textBody = isDE
+      ? `Liebe/r ${name},\n\nvielen Dank für Ihre Zahlung. Anbei die Zahlungsbestätigung für Ihre Sitzung am ${dateStr} (€${amount.toFixed(2)}).\n\nFür eine vollständige Rechnung zur Einreichung bei Ihrer Versicherung wenden Sie sich bitte direkt an mich.\n\nMit freundlichen Grüßen,\nRobert Rozek`
+      : `Dear ${name},\n\nThank you for your payment. Attached is the payment confirmation for your session on ${dateStr} (€${amount.toFixed(2)}).\n\nFor a full invoice for insurance submission, please contact me directly.\n\nKind regards,\nRobert Rozek`;
+
+    const filename = isDE
+      ? `Zahlungsbestaetigung_${dateStr.replace(/\./g, '-')}.pdf`
+      : `Payment_Confirmation_${dateStr.replace(/\./g, '-')}.pdf`;
+
+    const transporter = nodemailer.createTransport({
+      host, port, secure: port === 465, auth: { user, pass },
+    });
+
+    await transporter.sendMail({
+      from: `"${fromName}" <${user}>`,
+      to: `"${name}" <${email}>`,
+      bcc: user, // BCC to practice for records
+      subject,
+      text: textBody,
+      html: htmlBody,
+      attachments: [{
+        filename,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      }],
+    });
+
+    console.log(`[SMTP] Receipt email sent to ${email} (BCC: ${user})`);
+    return true;
+  } catch (err) {
+    console.error(`[SMTP] Receipt email failed: ${err.message}`);
+    return false;
+  }
+}
+
 function verifyCalcomSignature(payload, signature, secret) {
   if (!secret || !signature) return false;
   const expected = crypto
@@ -185,13 +281,27 @@ module.exports = async function handler(req, res) {
     const siteUrl = process.env.SITE_URL || 'https://robertrozek.de';
     const provider = process.env.ESIGN_PROVIDER || 'none';
 
-    // Feature flag: if e-signing is disabled, just log the booking
+    // Feature flag: if e-signing is disabled, just log the booking but still send receipt
     if (provider === 'none') {
       console.log(`Booking received: ${attendee.name} <${attendee.email}> [${lang}] — e-signing disabled, send intake docs manually`);
+
+      // Still send payment receipt
+      const startTime = booking.startTime;
+      if (startTime) {
+        await sendReceiptEmail({
+          email: attendee.email,
+          name: attendee.name,
+          sessionDate: startTime,
+          lang,
+          referenceId: booking.uid || booking.bookingId || 'N/A',
+        });
+      }
+
       return res.status(200).json({
         success: true,
         skipped: true,
         reason: 'esign_disabled',
+        receiptSent: !!startTime,
         attendee: { name: attendee.name, email: attendee.email, lang },
       });
     }
@@ -224,6 +334,18 @@ module.exports = async function handler(req, res) {
       });
     } else {
       console.warn('[Webhook] No signing URL returned — client will not receive signing email');
+    }
+
+    // Send payment receipt (Zahlungsbestätigung) with PDF attachment
+    const startTime = booking.startTime;
+    if (startTime) {
+      await sendReceiptEmail({
+        email: attendee.email,
+        name: attendee.name,
+        sessionDate: startTime,
+        lang,
+        referenceId: booking.uid || booking.bookingId || 'N/A',
+      });
     }
 
     return res.status(200).json({
