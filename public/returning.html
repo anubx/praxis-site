@@ -316,20 +316,13 @@
     <h2>Book your next session</h2>
     <p>Select a time that works for you. You'll receive a confirmation email with the video link.</p>
 
-    <!--
-      ╔═══════════════════════════════════════════════════════════════╗
-      ║  TODO: Create a separate Cal.com event type for returning    ║
-      ║  clients at €50 (e.g., "rozek.therapy/returning") with a    ║
-      ║  corresponding Stripe price. Then replace the calLink below. ║
-      ╚═══════════════════════════════════════════════════════════════╝
-    -->
     <div id="cal-inline-embed"></div>
     <script>
       (function waitForCal() {
         if (window.Cal) {
           Cal("inline", {
             elementOrSelector: "#cal-inline-embed",
-            calLink: "rozek.therapy/returning",
+            calLink: "rozek.therapy/session-returning",
             layout: "month_view",
             config: { hideEventTypeDetails: "true" }
           });
