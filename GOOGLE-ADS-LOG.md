@@ -184,14 +184,29 @@ Declined. Sends hashed client emails to Google for ad matching. For a therapy pr
 
 Decided NOT to create a Google Business Profile. Reason: therapy practice by nature involves confrontational work with difficult personalities. Negative reviews are a structural risk that outweighs the SEO benefit of map pack visibility.
 
+## Conversion Tracking — Done via GA4 Import
+
+- [x] **"Book appointment" conversion action created** (2026-03-05) — imported `booking_click` GA4 event directly. No code changes needed in index.html.
+- Type: Book appointment, Source: Google Analytics (GA4), Event: booking_click
+- Count: Every conversion, Click-through window: 30 days, Attribution: Data-driven
+- Value: Uses GA4 property value, fallback €1
+- The `AW-XXXXXXXXX` placeholders in index.html are NOT needed — GA4 import method is used instead. Leave them commented out.
+
+## Promo Code Status
+
+- [x] **Promo code active** — Code 3CXR6-6QURN-HAU6, redeemed Feb 27, 2026
+- Spend €400 → get €400 bonus credit
+- **Deadline: April 28, 2026** (spend must reach €400 by then)
+- Amount spent so far: €0.00
+
 ## Before Launching (Remaining Checklist)
 
-- [ ] Apply promo code (€400 bonus — Billing → Promotions. Must apply within 14 days of account creation on 2026-03-05, so **deadline ~2026-03-19**)
-- [ ] Set up conversion tracking (get AW-ID from conversion action, update index.html code, push) — optional, GA4 page view tracking works as fallback
 - [ ] Remove end date (currently March 31 — should be open-ended)
 - [ ] Change start date to actual launch date
 - [ ] Enable campaign
 
+That's it. Three clicks.
+
 ---
 
-*Log created 2026-03-05. Last updated 2026-03-05 (SEO deployed, GSC submitted, GBP declined).*
+*Log created 2026-03-05. Last updated 2026-03-05 (conversion tracking via GA4 import, promo code confirmed active).*
