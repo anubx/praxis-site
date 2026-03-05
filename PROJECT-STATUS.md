@@ -1,8 +1,8 @@
 # Project Status — 2026-03-05 (Updated)
 
-## Overall Completeness: 100% for Phase 1 Go-Live ✅
+## Overall Completeness: 100% Phase 1 + ~80% Phase 2 (Marketing & Polish)
 
-The core product is fully functional and all pre-launch requirements are met. End-to-end test completed successfully on 2026-03-05: booking → payment → receipt PDF → e-signature → video link → cancellation — all working. Cal.com DPA countersignature still pending but does not block operations.
+Phase 1 (core product) is fully live and tested. Phase 2 (marketing, SEO, polish) is well underway — Google Ads campaign built, German translation done, legal compliance audited.
 
 ---
 
@@ -10,8 +10,10 @@ The core product is fully functional and all pre-launch requirements are met. En
 
 | Component | Status | Notes |
 |---|---|---|
-| **Landing page** | ✅ Live | `robertrozek.de`, inline Cal.com embed, psychotherapy branding, responsive |
-| **Booking flow** | ✅ Working | Cal.com → Stripe €150 → BOOKING_CREATED webhook |
+| **Landing page** | ✅ Live | `robertrozek.de`, inline Cal.com embed, responsive |
+| **German translation** | ✅ Live | `/de/index.html`, `/de/datenschutz.html`, `/de/impressum.html`, DE/EN toggle |
+| **Returning client page** | ✅ Built | `/returning.html` + `/de/returning.html`, €70, noindex, unlisted |
+| **Booking flow** | ✅ Working | Cal.com → Stripe €150 (standard) / €70 (returning) |
 | **E-signature** | ✅ Working | OpenAPI EU-SES, DPA signed, production tokens |
 | **Payment receipt** | ✅ Built | Zahlungsbestätigung PDF auto-sent per booking via SMTP |
 | **Monthly invoices** | ✅ Built | `tools/generate-rechnung.py` with GebüH codes, sequential numbering |
@@ -21,104 +23,59 @@ The core product is fully functional and all pre-launch requirements are met. En
 | **Impressum** | ✅ Updated | Phone number, Steuernummer, full legal info |
 | **Intake documents** | ✅ Generated | DE + EN combined PDFs, 6 pages each |
 | **Domain + SSL** | ✅ Live | `robertrozek.de` on Vercel with auto-SSL |
-| **Analytics** | ✅ Active | GA4 + Microsoft Clarity |
+| **Analytics** | ✅ Active | GA4 (G-PJGQ4RBY5R) + Microsoft Clarity |
 | **Favicon + OG image** | ✅ Added | Social sharing works |
-| **Legal compliance** | ✅ Core | HeilprG designation, §4 UStG exemption, §203 StGB acknowledged |
-| **Decision documentation** | ✅ Comprehensive | README.md has full decision log, bug log, architecture notes |
+| **HWG legal compliance** | ✅ Audited | Protected title fixed, competitor disparagement removed, §9 framing correct |
+| **Self-hosted fonts** | ✅ Done | Instrument Serif + DM Sans in `/fonts/`, no Google CDN calls |
+| **Security headers** | ✅ Done | CSP, HSTS, Permissions-Policy, X-Frame-Options in vercel.json |
 | **Stripe customer emails** | ✅ Enabled | Successful payments + Refunds toggled on |
-| **Email deliverability** | ✅ Configured | SPF + DKIM (2 keys) + DMARC at all-inkl; stale Mailjet records removed |
-| **DPAs (6/7)** | ✅ Signed | OpenAPI, all-inkl, Stripe, Vercel, GA4, Clarity — all in `/dpa` folder |
+| **Email deliverability** | ✅ Configured | SPF + DKIM (2 keys) + DMARC at all-inkl |
+| **DPAs (6/7)** | ✅ Signed | OpenAPI, all-inkl, Stripe, Vercel, GA4, Clarity |
+| **Cookie banner bilingual** | ✅ Done | English + German versions on respective pages |
+| **Google Ads campaign** | ✅ Built | 3 ad groups, 15 negative keywords, €10/day, paused. GA4 linked. |
+| **Marketing strategy doc** | ✅ Written | MARKETING-STRATEGY.md — full HWG legal framework, ad copy, SEO plan |
+| **Google Ads log** | ✅ Written | GOOGLE-ADS-LOG.md — all settings, decisions, caveats |
+| **Variant pages archived** | ✅ Done | Doctolib + RED Medical variants moved to `/archive/` |
 
-## What's Remaining (Priority Order)
-
-### ~~Must-Do Before First Real Client~~ — ALL DONE
-
-1. ~~**End-to-end test**~~ — ✅ Completed 2026-03-05. Booking, receipt PDF, e-signature, video link, cancellation all verified working.
+## What's Remaining
 
 ### Waiting on External (No Action Needed)
 
-2. **Cal.com DPA countersignature** — Requested 2x (2026-03-04 + 2026-03-05), pending from Bailey Pumfleet. Nothing to do but wait.
+1. **Cal.com DPA countersignature** — Requested 2x, pending from Cal.com. Nothing to do but wait.
 
-### Should-Do Soon
+### Should-Do Before Launching Ads
 
-3. **Self-host Google Fonts** — Eliminates DSGVO liability (LG München I ruling)
-4. **Security headers** — CSP, HSTS, Permissions-Policy in vercel.json
-5. **Google Search Console** — Request re-indexing (old "Psychoanalytic Practice" text cached)
-6. **Privacy policy additions** — Supervisory authority (BayLDA), US data transfer section
-7. **Regenerate intake PDFs** — Update provider references (Cal Video instead of RED Medical)
-8. **Google Ads campaign** — €400 spend → €400 bonus credits. Tracking IDs already in HTML (commented out)
+2. **Google Ads conversion tracking code** — Get AW-XXXXXXXXX conversion ID, uncomment lines ~93 and ~128-132 in index.html, push. (Can also skip — GA4 page view tracking works as fallback.)
+3. **Apply Google Ads promo code** — €400 spend → €400 bonus. Must be applied within 14 days of account creation.
+4. **Remove Google Ads end date** — Currently set March 24–31. Remove end date before launch.
+
+### Should-Do Soon (SEO)
+
+5. **Google Search Console** — Request re-indexing (old cached text). Add property, submit sitemap.
+6. **sitemap.xml** — Create and deploy. Include EN + DE pages, exclude /returning.html and /archive/.
+7. **robots.txt** — Create and deploy. Reference sitemap, disallow archive + returning.
+8. **JSON-LD schema markup** — MedicalBusiness structured data for rich search results.
+9. **Google Business Profile** — Claim on business.google.com. Category: "Heilpraktiker" (NOT "Psychotherapeut"). Highest-impact free SEO action.
 
 ### Nice-to-Have
 
-9. **German translation** — Switchable DE/EN site version
-10. **Cookie banner bilingual** — Currently English only
-11. **Schema markup (JSON-LD)** — Rich search snippets
-12. **sitemap.xml + robots.txt** — SEO basics
+10. **Directory listings** — therapie.de, jameda.de, Doctolib (free backlinks + referral channels)
+11. **Content pages for SEO** — `/online-therapie.html`, `/angst-therapie.html` etc. for keyword targeting
+12. **Privacy policy additions** — Supervisory authority (BayLDA), US data transfer section
 13. **Uptime monitoring** — BetterStack free tier
 14. **Error tracking** — Sentry free tier
+15. **Blog / articles section** — Long-term SEO content strategy
 
 ---
 
-## SaaS Checklist Cross-Reference (Non-SaaS Adaptations)
+## Phase Summary
 
-Mapping the uploaded SaaS checklist to this practice website project:
-
-### Applicable & Done
-- ✅ Landing page that explains value
-- ✅ Pricing page/section
-- ✅ Analytics on landing page (GA4 + Clarity)
-- ✅ Domain and DNS set up
-- ✅ Production environment configured
-- ✅ SSL/HTTPS configured
-- ✅ CI/CD pipeline (git push → Vercel auto-deploy)
-- ✅ Environment variables managed securely (Vercel)
-- ✅ Payment integration (Stripe via Cal.com)
-- ✅ Webhook handling (booking + cancellation)
-- ✅ Privacy policy
-- ✅ Transactional email (signing URLs, receipts)
-- ✅ Invoices / receipts
-- ✅ Decision documentation (comprehensive README)
-- ✅ Works on mobile / different screen sizes
-- ✅ Contact method exists (email + phone)
-- ✅ FAQ on site
-- ✅ Secrets not in code (env vars)
-
-### Applicable & Missing
-- ⬜ **Conversion tracking** — Google Ads tracking IDs in HTML but commented out. Needs campaign creation + uncommenting.
-- ⬜ **Open Graph tags: dynamic** — Static OG image exists but no dynamic per-page OG tags
-- ⬜ **Schema markup (JSON-LD)** — Not implemented. Would improve search appearance.
-- ⬜ **Canonical tags** — Present but only on main page. Variant pages may need updating.
-- ⬜ **Server-side conversion tracking (CAPI)** — Not implemented. Client-side blocking reduces ad attribution accuracy.
-- ⬜ **Sitemap.xml and robots.txt** — Not auto-generated or submitted to GSC.
-- ✅ **Email deliverability (SPF, DKIM, DMARC)** — Configured at all-inkl. Stale Mailjet records cleaned up.
-- ⬜ **Uptime monitoring** — No alerting if webhook endpoints go down.
-- ⬜ **Error tracking** — No Sentry or equivalent. Errors only visible in Vercel function logs.
-- ⬜ **Audit logging** — Webhook logs exist in Vercel but not queryable long-term.
-- ⬜ **Social proof** — No testimonials or review integration (deliberately — BetterHelp reviews can't be used, FTC risk).
-
-### Not Applicable (SaaS-specific)
-- N/A Authentication & accounts (no user accounts — Cal.com handles this)
-- N/A Subscription management (one-time session payments)
-- N/A Database backups (no database — stateless serverless)
-- N/A Staging environment (Vercel preview deployments serve this purpose)
-- N/A Account deletion (no accounts to delete)
-- N/A Churn analysis (not a subscription product)
-- N/A Rate limiting (low traffic, webhook-only API surface)
-- N/A SQL injection / XSS / CSRF (static site + serverless, no user input rendered)
+| Phase | Status | Description |
+|---|---|---|
+| **Phase 1: Core Product** | ✅ 100% | Site, booking, payments, legal docs, e-signature, webhooks |
+| **Phase 2: Marketing & Polish** | ~80% | Ads built (not launched), DE translation done, HWG audit done. SEO basics (sitemap, robots.txt, GSC, JSON-LD, GBP) still pending. |
+| **Phase 3: Growth** | Not started | Blog, content pages, directory listings, ongoing ad optimization |
 
 ---
 
-## Google Ads Recommendation
-
-The €400 spend → €400 bonus promotion is worth activating. Recommended approach:
-
-1. **Create Google Ads account** → link to GA4 property
-2. **Uncomment tracking in index.html** — replace `AW-XXXXXXXXX` with real conversion ID
-3. **Create conversion action** — "Book session" button click or Cal.com booking confirmation
-4. **Campaign targeting:**
-   - Keywords: "Psychotherapie München online", "Heilpraktiker Psychotherapie online", "Therapeut München", "Psychologische Beratung München"
-   - Location: Munich + 50km radius, Germany-wide for online
-   - Budget: €15–20/day to use the €400 within ~25 days
-5. **Consider server-side conversion tracking** later (Vercel function → Google Ads API) to capture conversions that client-side tracking misses due to ad blockers
-
-Expected CPA: €30–80 per first session booking (psychotherapy keyword CPCs in Germany range €2–8).
+*Last updated 2026-03-05.*
