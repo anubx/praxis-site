@@ -939,12 +939,25 @@
 
   .btn-scholar svg { width: 17px; height: 17px; }
 
-  /* ============ CTA ============ */
+  /* ============ CTA / BOOKING ============ */
   .cta-section {
     text-align: center;
-    padding: 8rem 2rem;
+    padding: 8rem 2rem 4rem;
     max-width: 680px;
     margin: 0 auto;
+  }
+
+  /* Inline Cal.com embed container */
+  #cal-inline-embed {
+    max-width: 480px;
+    margin: 2rem auto 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--stone-200);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+  #cal-inline-embed iframe {
+    border-radius: 12px;
   }
 
   .cta-section h2 {
@@ -1352,7 +1365,7 @@
 <section id="book" class="cta-section reveal">
   <h2>Ready to begin?</h2>
   <p>Book a first session. We'll talk about your situation and whether psychoanalytic work makes sense for you. No pressure, no commitment to continue.</p>
-  <div id="cal-inline-embed" style="width:100%; min-height:500px; margin-top:2rem;"></div>
+  <div id="cal-inline-embed"></div>
   <script>
     // Wait for Cal to load, then render inline embed
     (function waitForCal() {
@@ -1360,7 +1373,8 @@
         Cal("inline", {
           elementOrSelector: "#cal-inline-embed",
           calLink: "rozek.therapy/session",
-          layout: "month_view"
+          layout: "month_view",
+          config: { hideEventTypeDetails: "true" }
         });
       } else {
         setTimeout(waitForCal, 100);
