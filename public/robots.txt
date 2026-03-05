@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Unlisted pages — not for indexing
+Disallow: /returning.html
+Disallow: /de/returning.html
+
+# Archived variant pages
+Disallow: /archive/
+
+# Legacy coaching page
+Disallow: /coaching.html
+
+Sitemap: https://robertrozek.de/sitemap.xml
