@@ -1291,6 +1291,32 @@
   </div>
 </section>
 
+<!-- ============ BOOKING / CTA ============ -->
+<section id="book" class="cta-section reveal">
+  <h2>Ready to begin?</h2>
+  <p>Book a first session. We'll talk about your situation and whether working together makes sense for you. No pressure, no commitment to continue.</p>
+  <div id="cal-inline-embed"></div>
+  <script>
+    // Wait for Cal to load, then render inline embed
+    (function waitForCal() {
+      if (window.Cal) {
+        Cal("inline", {
+          elementOrSelector: "#cal-inline-embed",
+          calLink: "rozek.therapy/session",
+          layout: "month_view",
+          config: { hideEventTypeDetails: "true" }
+        });
+      } else {
+        setTimeout(waitForCal, 100);
+      }
+    })();
+  </script>
+  <div class="cta-badge" style="margin-top:1.5rem;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Secure &middot; Confidential &middot; GDPR compliant
+  </div>
+</section>
+
 <div class="container"><hr class="divider"></div>
 
 <!-- ============ ABOUT ============ -->
@@ -1468,34 +1494,6 @@
     </div>
   </div>
 </section>
-
-<!-- ============ BOOKING / CTA ============ -->
-<section id="book" class="cta-section reveal">
-  <h2>Ready to begin?</h2>
-  <p>Book a first session. We'll talk about your situation and whether working together makes sense for you. No pressure, no commitment to continue.</p>
-  <div id="cal-inline-embed"></div>
-  <script>
-    // Wait for Cal to load, then render inline embed
-    (function waitForCal() {
-      if (window.Cal) {
-        Cal("inline", {
-          elementOrSelector: "#cal-inline-embed",
-          calLink: "rozek.therapy/session",
-          layout: "month_view",
-          config: { hideEventTypeDetails: "true" }
-        });
-      } else {
-        setTimeout(waitForCal, 100);
-      }
-    })();
-  </script>
-  <div class="cta-badge" style="margin-top:1.5rem;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Secure &middot; Confidential &middot; GDPR compliant
-  </div>
-</section>
-
-<div class="container"><hr class="divider"></div>
 
 <!-- ============ RESEARCH ============ -->
 <section class="section" id="research">
