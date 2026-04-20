@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robert Rozek — Psychotherapie (n. d. HeilprG) · München</title>
+<title>Robert P. Rozek — Psychotherapie (n. d. HeilprG) · München</title>
 <meta name="description" content="Psychotherapie auf Grundlage von Kontinentalphilosophie, lacanianischer Theorie und kognitiver Verhaltenstherapie. Sichere Videositzungen aus München.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://robertrozek.de/de/">
@@ -17,7 +17,7 @@
 <link rel="alternate" hreflang="x-default" href="https://robertrozek.de/">
 
 <!-- Open Graph -->
-<meta property="og:title" content="Robert Rozek — Psychotherapie">
+<meta property="og:title" content="Robert P. Rozek — Psychotherapie">
 <meta property="og:description" content="Psychotherapie auf Grundlage von Kontinentalphilosophie, lacanianischer Theorie und kognitiver Verhaltenstherapie.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://robertrozek.de/og-image.png">
@@ -32,7 +32,7 @@
 {
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
-  "name": "Praxis für Psychotherapie — Robert Rozek",
+  "name": "Praxis für Psychotherapie — Robert P. Rozek",
   "description": "Online-Psychotherapie (n. d. HeilprG) auf Grundlage von Kontinentalphilosophie, lacanianischer Theorie und kognitiver Verhaltenstherapie. Sichere Videositzungen aus München.",
   "url": "https://robertrozek.de/de/",
   "email": "rozek.therapy@pm.me",
@@ -456,19 +456,23 @@
   }
 
   .lang-toggle a {
-    font-size: 0.7rem;
+    font-size: 0.82rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    color: var(--stone-400);
+    letter-spacing: 0.04em;
+    color: var(--stone-600);
     text-decoration: none;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--stone-200);
-    border-radius: 4px;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--stone-300);
+    border-radius: 100px;
     transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
   .lang-toggle a:hover {
-    color: var(--stone-800);
-    border-color: var(--stone-400);
+    color: var(--stone-900);
+    border-color: var(--stone-500);
+    transform: translateY(-1px);
   }
 
   /* Mobile menu */
@@ -492,13 +496,37 @@
   /* ============ HERO ============ */
   .hero {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: 3rem;
     padding: 8rem 2rem 5rem;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-portrait-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 1s ease 0.4s both;
+  }
+
+  .hero-portrait {
+    width: 100%;
+    max-width: 340px;
+    border-radius: 18px;
+    object-fit: cover;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--stone-200);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.08);
   }
 
   .hero-label {
@@ -606,30 +634,51 @@
 
   a:hover .arrow, button:hover .arrow { transform: translateX(3px); }
 
-  /* Decorative elements */
-  .hero-accent {
-    position: absolute;
-    right: 4rem;
-    top: 50%;
-    transform: translateY(-50%);
+  /* ============ TRUST STRIP ============ */
+  .trust-strip {
+    padding: 2.5rem 0;
+    text-align: center;
+  }
+
+  .trust-badges {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    animation: fadeIn 1.2s ease 0.6s both;
+    justify-content: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
   }
 
-  .hero-accent .line {
-    width: 1px;
-    height: 120px;
-    background: linear-gradient(to bottom, transparent, var(--warm-muted), transparent);
+  .trust-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--stone-400);
   }
 
-  .hero-accent .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--warm);
+  .trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1.1rem;
+    border: 1px solid var(--stone-200);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--stone-600);
+    text-decoration: none;
+    transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+
+  .trust-badge:hover {
+    border-color: var(--stone-400);
+    color: var(--stone-800);
+    transform: translateY(-1px);
+  }
+
+  .trust-sep {
+    color: var(--stone-300);
+    font-size: 0.9rem;
   }
 
   /* ============ SHARED ============ */
@@ -1005,7 +1054,7 @@
   /* ============ CTA / BOOKING ============ */
   .cta-section {
     text-align: center;
-    padding: 6rem 2rem 4rem;
+    padding: 2.5rem 2rem 4rem;
     max-width: 960px;
     margin: 0 auto;
   }
@@ -1138,7 +1187,9 @@
     .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
     .about-credentials { position: static; }
     .research-banner { flex-direction: column; align-items: flex-start; padding: 3rem; }
-    .hero-accent { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-portrait-wrap { order: -1; }
+    .hero-portrait { max-width: 220px; }
   }
 
   @media (max-width: 768px) {
@@ -1199,7 +1250,7 @@
 <!-- ============ NAV ============ -->
 <nav id="nav">
   <div class="nav-left">
-    <a href="#" class="logo">Robert Rozek</a>
+    <a href="#" class="logo">Robert P. Rozek</a>
     <span class="logo-tag">Psychotherapie (n.&thinsp;d.&thinsp;HeilprG)</span>
   </div>
   <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
@@ -1216,30 +1267,82 @@
         Termin <span class="arrow">&rarr;</span>
       </a>
     </li>
-    <li class="lang-toggle"><a href="/">EN</a></li>
+    <li class="lang-toggle"><a href="/">&#127468;&#127463; English</a></li>
   </ul>
 </nav>
 
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="hero-label">Psychotherapie (n.&thinsp;d.&thinsp;HeilprG) &middot; München &middot; Online</div>
-  <h1>Ein Raum, um wieder <em>klar</em> zu denken</h1>
-  <p class="hero-sub">
-    Psychotherapie auf Grundlage von Kontinentalphilosophie, lacanianischer Theorie und kognitiver Verhaltenstherapie. Sichere Videositzungen aus München.
-  </p>
-  <div class="hero-actions">
-    <a href="#book" class="btn-primary"
-       onclick="trackBooking('calcom', 'hero_book', 'Hero CTA')">
-      Erstgespräch buchen <span class="arrow">&rarr;</span>
-    </a>
-    <a href="#about" class="btn-ghost">
-      Mehr erfahren <span class="arrow">&darr;</span>
-    </a>
+  <div class="hero-content">
+    <div class="hero-label">Psychotherapie (n.&thinsp;d.&thinsp;HeilprG) &middot; M&uuml;nchen &middot; Online</div>
+    <h1>Ein Raum, um wieder <em>klar</em> zu denken</h1>
+    <p class="hero-sub">
+      Psychotherapie auf Grundlage von Kontinentalphilosophie, lacanianischer Theorie und kognitiver Verhaltenstherapie. Sichere Videositzungen aus M&uuml;nchen.
+    </p>
+    <div class="hero-actions">
+      <a href="#book" class="btn-primary"
+         onclick="trackBooking('calcom', 'hero_book', 'Hero CTA')">
+        Erstgespr&auml;ch buchen <span class="arrow">&rarr;</span>
+      </a>
+      <a href="#about" class="btn-ghost">
+        Mehr erfahren <span class="arrow">&darr;</span>
+      </a>
+    </div>
+    <div class="trust-badges" style="margin-top:1.5rem; justify-content: flex-start;">
+      <span class="trust-label">Finden Sie mich auf</span>
+      <a href="https://www.doctolib.de/heilpraktiker-fur-psychotherapie/muenchen/robert-p-rozek" target="_blank" rel="noopener" class="trust-badge"
+         onclick="trackOutbound(this.href, 'Hero Doctolib')">
+        Doctolib
+      </a>
+      <span class="trust-sep">&middot;</span>
+      <a href="https://complicated.life/find-a-therapist/munich/psychologist-non-medical-practitioner-for-psychotherapy-robert-rozek" target="_blank" rel="noopener" class="trust-badge"
+         onclick="trackOutbound(this.href, 'Hero ItsComplicated')">
+        It&rsquo;s Complicated
+      </a>
+    </div>
   </div>
-  <div class="hero-accent">
-    <div class="line"></div>
-    <div class="dot"></div>
-    <div class="line"></div>
+  <div class="hero-portrait-wrap">
+    <img src="/portrait.jpg" alt="Robert P. Rozek — Psychotherapeut" class="hero-portrait">
+  </div>
+</section>
+
+<!-- ============ BOOKING / CTA ============ -->
+<section id="book" class="cta-section reveal">
+  <h2>Bereit zu beginnen?</h2>
+  <p>Buchen Sie eine erste Sitzung. Wir sprechen &uuml;ber Ihre Situation und ob eine Zusammenarbeit f&uuml;r Sie sinnvoll ist. Kein Druck, keine Verpflichtung.</p>
+  <div id="cal-inline-embed"></div>
+  <script>
+    (function waitForCal() {
+      if (window.Cal) {
+        Cal("inline", {
+          elementOrSelector: "#cal-inline-embed",
+          calLink: "rozek.therapy/session",
+          layout: "month_view",
+          config: { hideEventTypeDetails: "true" }
+        });
+      } else {
+        setTimeout(waitForCal, 100);
+      }
+    })();
+  </script>
+  <div class="cta-badge" style="margin-top:1.5rem;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Sicher &middot; Vertraulich &middot; DSGVO-konform
+  </div>
+  <p style="margin-top:1.25rem; font-size:0.82rem; color:var(--stone-400);">
+    Probleme bei der Buchung? Kontakt: <a href="mailto:rozek.psy@pm.me" style="color:var(--stone-500); text-decoration:underline;">rozek.psy@pm.me</a> f&uuml;r manuelle Terminvereinbarung.
+  </p>
+  <div class="trust-badges" style="margin-top:1.5rem;">
+    <span class="trust-label">Oder direkt buchen &uuml;ber</span>
+    <a href="https://www.doctolib.de/heilpraktiker-fur-psychotherapie/muenchen/robert-p-rozek" target="_blank" rel="noopener" class="trust-badge"
+       onclick="trackBooking('doctolib', 'cal_fallback_book', 'Doctolib booking')">
+      Doctolib <span class="arrow">&rarr;</span>
+    </a>
+    <span class="trust-sep">&middot;</span>
+    <a href="https://complicated.life/book/robertrozek" target="_blank" rel="noopener" class="trust-badge"
+       onclick="trackBooking('itscomplicated', 'cal_fallback_book', 'ItsComplicated booking')">
+      It&rsquo;s Complicated <span class="arrow">&rarr;</span>
+    </a>
   </div>
 </section>
 
@@ -1331,6 +1434,26 @@
         <h3>Souveränität & Handlungsfähigkeit</h3>
         <p>Respekt vor Ihrer Intelligenz und Autonomie. Therapie als gemeinsame Untersuchung, nicht als Experten-Patienten-Hierarchie. Ihr Wissen über sich selbst ist der Ausgangspunkt.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><hr class="divider"></div>
+
+<!-- ============ TRUST STRIP ============ -->
+<section class="trust-strip reveal">
+  <div class="container">
+    <div class="trust-badges">
+      <span class="trust-label">Finden Sie mich auf</span>
+      <a href="https://www.doctolib.de/heilpraktiker-fur-psychotherapie/muenchen/robert-p-rozek" target="_blank" rel="noopener" class="trust-badge"
+         onclick="trackOutbound(this.href, 'Doctolib')">
+        Doctolib
+      </a>
+      <span class="trust-sep">&middot;</span>
+      <a href="https://complicated.life/find-a-therapist/munich/psychologist-non-medical-practitioner-for-psychotherapy-robert-rozek" target="_blank" rel="noopener" class="trust-badge"
+         onclick="trackOutbound(this.href, 'ItsComplicated')">
+        It&rsquo;s Complicated
+      </a>
     </div>
   </div>
 </section>
@@ -1430,38 +1553,16 @@
   </div>
 </section>
 
-<!-- ============ BOOKING / CTA ============ -->
-<section id="book" class="cta-section reveal">
-  <h2>Bereit zu beginnen?</h2>
-  <p>Buchen Sie eine erste Sitzung. Wir sprechen über Ihre Situation und ob eine Zusammenarbeit für Sie sinnvoll ist. Kein Druck, keine Verpflichtung zur Fortsetzung.</p>
-  <div id="cal-inline-embed"></div>
-  <script>
-    // Wait for Cal to load, then render inline embed
-    (function waitForCal() {
-      if (window.Cal) {
-        Cal("inline", {
-          elementOrSelector: "#cal-inline-embed",
-          calLink: "rozek.therapy/session",
-          layout: "month_view",
-          config: { hideEventTypeDetails: "true" }
-        });
-      } else {
-        setTimeout(waitForCal, 100);
-      }
-    })();
-  </script>
-  <div class="cta-badge" style="margin-top:1.5rem;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Sicher &middot; Vertraulich &middot; DSGVO-konform
-  </div>
-</section>
-
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-left">&copy; 2026 Robert Rozek &middot; Praxis für Psychotherapie, München</div>
+      <div class="footer-left">&copy; 2026 Robert P. Rozek &middot; Praxis für Psychotherapie, München</div>
       <ul class="footer-links">
+        <li><a href="https://www.doctolib.de/heilpraktiker-fur-psychotherapie/muenchen/robert-p-rozek" target="_blank" rel="noopener"
+               onclick="trackOutbound(this.href, 'Footer Doctolib')">Doctolib</a></li>
+        <li><a href="https://complicated.life/book/robertrozek" target="_blank" rel="noopener"
+               onclick="trackOutbound(this.href, 'Footer ItsComplicated')">It&rsquo;s Complicated</a></li>
         <li><a href="https://scholar.google.com/citations?hl=de&user=2dEjMfkAAAAJ" target="_blank" rel="noopener"
                onclick="trackOutbound(this.href, 'Footer Scholar')">Scholar</a></li>
         <li><a href="mailto:rozek.therapy@pm.me">Kontakt</a></li>
@@ -1470,7 +1571,7 @@
       </ul>
     </div>
     <div class="footer-legal">
-      Robert Rozek, MSc, MA &middot; Praxis für Psychotherapie nach Heilpraktikergesetz &middot; Augsburgerstraße 6, 80337 München<br>
+      Robert P. Rozek, MSc, MA &middot; Praxis für Psychotherapie nach Heilpraktikergesetz &middot; Augsburgerstraße 6, 80337 München<br>
       Diese Website stellt keine medizinische Beratung dar. Beratungsangebote für internationale Klient*innen sind keine Psychotherapie im Sinne der jeweiligen nationalen Gesundheitsvorschriften.
       Wenn Sie sich in einer Krise befinden, wenden Sie sich an den Notruf oder die <a href="https://www.telefonseelsorge.de/" target="_blank" rel="noopener">Telefonseelsorge</a> (0800 111 0 111).
     </div>
